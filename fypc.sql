@@ -4,13 +4,12 @@ USE FYPC;
 create table User(
 	ID int primary key auto_increment,
     name varchar(25) not null,
-    password varchar(10) not null,
+    password varchar(25) not null,
     usertype varchar(10) not null,	# can be student/ faculty/ admin
-    rollnum varchar(8) not null,	# student
-    cgpa varchar(10) not null,		# student
-    username varchar(10) not null,   # faculty and admin
-    email varchar(20) not null	# faculty
-    );
+    cgpa double not null,			# student
+    username varchar(25) not null unique,  # faculty and admin, will be roll num in case of student
+    email varchar(40) not null unique	
+);
     
     # drop table user
     
