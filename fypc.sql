@@ -112,6 +112,3 @@ create table Feedback(
     );
     
     # drop table Feedback
-    
-    
-    
