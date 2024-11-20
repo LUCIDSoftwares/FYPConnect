@@ -1,5 +1,6 @@
 package application.controller;
 
+import application.persistance.DBHandler;
 import application.services.LoginService;
 
 import javafx.event.ActionEvent;
@@ -36,6 +37,7 @@ public class LoginScreenController {
 			System.out.println("password is empty");
 			return;
 		}
+		
 		
 		
 		

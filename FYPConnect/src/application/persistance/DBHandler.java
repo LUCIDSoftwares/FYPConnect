@@ -14,6 +14,9 @@ import application.services.*;
 public class DBHandler {
 	private Connection connection;
 	private boolean connectionFlag;
+	private String dbName = System.getenv("DB_name");
+	private String dbUsername = System.getenv("DB_USERNAME");
+	private String dbPassword = System.getenv("DB_PASSWORD");
 
 // 	if Database doesn't connect try uncommenting the line below
 // 	Class.forName("com.mysql.cj.jdbc.Driver");	
@@ -23,9 +26,9 @@ public class DBHandler {
 		this.connectionFlag = false;
 	}
 	
-	private boolean establishConnection() {
+	public boolean establishConnection() {
 		try {
-			this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/<enter you db name>", "<enter the localhost name>", "<enter your password>");
+			this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + dbName, dbUsername, dbPassword);
 			this.connectionFlag = true;
 			//Statement stmt = con.createStatement();
 			//System.out.println("Inserting records");
