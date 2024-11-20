@@ -6,7 +6,7 @@ create table User(
     name varchar(25) not null,
     password varchar(25) not null,
     usertype varchar(10) not null,	# can be student/ faculty/ admin
-    cgpa double not null,			# student
+    cgpa double,			# student
     username varchar(25) not null unique,  # faculty and admin, will be roll num in case of student
     email varchar(40) not null unique	
 );
