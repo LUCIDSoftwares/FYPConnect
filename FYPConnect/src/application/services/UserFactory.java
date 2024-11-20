@@ -10,3 +10,4 @@ public abstract class UserFactory {
 	public abstract User createUser(ResultSet result);
 	public abstract User createUser(String userType);
 }
+

@@ -11,7 +11,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/OneDrive - FAST National University/Semester 5/CS CS3004-Software Design and Analysis/Project/FYPConnect/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar">
+	<classpathentry kind="lib" path="C:/Users/ryana/OneDrive - FAST National University/Semester-5/Software Design and Analysis/Project/FYPConnect/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
