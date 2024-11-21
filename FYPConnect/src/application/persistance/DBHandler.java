@@ -11,13 +11,13 @@ import application.datamodel.User;
 import application.services.*;
 
 // setup mysql with respect to eclipse then uncomment the following code
-public class DBHandler {
+public class DBHandler extends PersistanceHandler{
 	private Connection connection;
 	private boolean connectionFlag;
 	private String dbName = System.getenv("DB_name");
 	private String dbUsername = System.getenv("DB_USERNAME");
 	private String dbPassword = System.getenv("DB_PASSWORD");
-
+	
 // 	if Database doesn't connect try uncommenting the line below
 // 	Class.forName("com.mysql.cj.jdbc.Driver");	
 	
@@ -58,6 +58,7 @@ public class DBHandler {
 		return true;
 	}
 	
+	@Override
 	public void createUser(User user) {
 		this.establishConnection();
 		
@@ -65,6 +66,7 @@ public class DBHandler {
 		this.closeConnection();
 	}
 	
+	@Override
 	public User retrieveUser(String username, String password) {
 		this.establishConnection();
 		User user = null;
@@ -92,6 +94,7 @@ public class DBHandler {
 		return user;
 	}
 	
+	@Override
 	public int getNumOfUsers() {
 		this.establishConnection();
 		int numOfUsers = 0;
