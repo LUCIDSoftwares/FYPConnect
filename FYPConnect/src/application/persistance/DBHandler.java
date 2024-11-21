@@ -79,8 +79,8 @@ public class DBHandler {
 			preparedStatement1.setString(2, password);
 			ResultSet result1 = preparedStatement1.executeQuery();
 			if(result1.next()) {
-				UserFactory concreteFactory = new ConcreteUserFactory();
-				user = concreteFactory.createUser(result1);
+				UserFactory concreteUserFactory = ConcreteUserFactory.getInstance();
+				user = concreteUserFactory.createUser(result1);
 			}
 		
 		} catch (SQLException e) {
@@ -92,6 +92,27 @@ public class DBHandler {
 		return user;
 	}
 	
+	public int getNumOfUsers() {
+		this.establishConnection();
+		int numOfUsers = 0;
+		
+		String sqlQuery1 = "SELECT COUNT(*)\r\n"
+				+ "FROM User;";
+		
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			ResultSet result1 = preparedStatement1.executeQuery();
+			if(result1.next())
+				numOfUsers = result1.getInt(1);
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getNumOfUsers() method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return numOfUsers;
+	}
 	
 	
 }

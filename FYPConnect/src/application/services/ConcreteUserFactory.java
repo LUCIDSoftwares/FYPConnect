@@ -10,6 +10,20 @@ import application.datamodel.User;
 
 public class ConcreteUserFactory extends UserFactory {
 
+	// used for implementing the singleton pattern
+	private static ConcreteUserFactory instance;
+	
+	private ConcreteUserFactory() {
+		// used for implementing the singleton pattern
+	}
+	
+	public static synchronized ConcreteUserFactory getInstance() {
+		if(instance == null) {
+			instance = new ConcreteUserFactory();
+		}
+		return instance;
+	}
+	
 	@Override
 	public User createUser(ResultSet result) {
 	    User user = null;
@@ -63,7 +77,6 @@ public class ConcreteUserFactory extends UserFactory {
 	    }
 	    return user;
 	}
-
 	
 	@Override
 	public User createUser(String userType) {
