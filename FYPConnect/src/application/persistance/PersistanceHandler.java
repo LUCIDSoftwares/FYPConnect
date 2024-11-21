@@ -10,4 +10,8 @@ public abstract class PersistanceHandler {
 	
 	public abstract int getNumOfUsers();
 	
+	public abstract int getNumOfGroups();
+	
+	public abstract int getNumOfProjects();
+	
 }

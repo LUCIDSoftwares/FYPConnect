@@ -116,6 +116,53 @@ public class DBHandler extends PersistanceHandler{
 		this.closeConnection();
 		return numOfUsers;
 	}
+
+	
+	@Override
+	public int getNumOfGroups() {
+		this.establishConnection();
+		int numOfGroups = 0;
+		
+		String sqlQuery1 = "SELECT COUNT(*)\r\n"
+				+ "FROM groupT;";
+		
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			ResultSet result1 = preparedStatement1.executeQuery();
+			if(result1.next())
+				numOfGroups = result1.getInt(1);
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getNumOfGroups() method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return numOfGroups;
+	}
+
+	@Override
+	public int getNumOfProjects() {
+		this.establishConnection();
+		int numOfProjects = 0;
+		
+		String sqlQuery1 = "SELECT COUNT(*)\r\n"
+				+ "FROM project;";
+		
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			ResultSet result1 = preparedStatement1.executeQuery();
+			if(result1.next())
+				numOfProjects = result1.getInt(1);
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getNumOfProjects() method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return numOfProjects;
+	}
 	
 	
 }
