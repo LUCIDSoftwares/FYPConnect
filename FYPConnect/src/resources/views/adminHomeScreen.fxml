@@ -9,7 +9,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="517.0" prefWidth="781.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.AdminScreenController">
    <children>
       <Pane layoutX="64.0" layoutY="44.0" prefHeight="473.0" prefWidth="718.0" />
-      <Button layoutX="704.0" layoutY="14.0" mnemonicParsing="false" text="Log out" />
+      <Button fx:id="logoutButton" layoutX="704.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleLogout" text="Log out" />
       <TextArea fx:id="admin_username" editable="false" layoutX="435.0" layoutY="10.0" minHeight="-Infinity" prefHeight="33.0" prefWidth="255.0" text="adminname">
          <font>
             <Font name="Calibri Italic" size="14.0" />
