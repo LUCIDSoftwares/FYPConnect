@@ -1,0 +1,2 @@
+Background screens dimensions: 1010, 700 ( width * height)
+Inserted panes dimensions: 900 * 620
