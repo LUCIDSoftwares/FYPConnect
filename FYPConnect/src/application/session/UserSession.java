@@ -1,7 +1,7 @@
 package application.session;
 
 import application.datamodel.User;
-
+//Implement Singleton pattern
 public class UserSession {
 	
     // 1. Private static instance (Singleton)
