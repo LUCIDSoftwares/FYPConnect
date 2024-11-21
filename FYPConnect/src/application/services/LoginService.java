@@ -1,6 +1,7 @@
 package application.services;
 
 import application.datamodel.User;
+import application.persistance.ConcretePersistanceFactory;
 import application.persistance.DBHandler;
 import application.persistance.PersistanceHandler;
 
@@ -10,7 +11,8 @@ public class LoginService {
 	
 	public User login(String username, String password) {
 		
-		dbHandler = new DBHandler();
+		dbHandler = ConcretePersistanceFactory.getInstance().createPersistanceHandler("DBHandler");
+
 		User user = this.dbHandler.retrieveUser(username, password);
 		
 		return user;
