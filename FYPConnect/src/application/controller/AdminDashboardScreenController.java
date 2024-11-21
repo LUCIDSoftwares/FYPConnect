@@ -15,7 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-public class AdminScreenController {
+public class AdminDashboardScreenController {
     private User user;
     
     @FXML
