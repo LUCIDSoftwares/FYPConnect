@@ -92,5 +92,20 @@ public class ConcreteUserFactory extends UserFactory {
 		}
 		return user;
 	}
-
+	
+	@Override
+	public User createUser(String userType, String name, String username, String password, String email, double cgpa) {
+		User user = null;
+		if(userType.equalsIgnoreCase("Student") == true) {
+			user = new Student(name, username, password, email, cgpa);
+		}
+		else if(userType.equalsIgnoreCase("Faculty") == true) {
+			user = new Faculty(name, username, password, email);
+		}
+		else {
+			user = new Admin(name, username, password, email); 
+		}
+		return user;
+	}
+	
 }

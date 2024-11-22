@@ -9,5 +9,6 @@ public abstract class UserFactory {
 
 	public abstract User createUser(ResultSet result);
 	public abstract User createUser(String userType);
+	public abstract User createUser(String userType, String name, String username, String password, String email, double cgpa);
 }
 
