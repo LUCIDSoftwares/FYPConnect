@@ -120,20 +120,21 @@ public class AdminDashboardScreenController {
     @FXML
 	public void createUsers(MouseEvent me) {
     	System.out.println("Create Users Button Clicked");
+    	this.loadPage("adminCreateUsersScreen");
 	}
     
     @FXML
-        public void updateUsers(MouseEvent me) {
+    public void updateUsers(MouseEvent me) {
     	System.out.println("Update Users Button Clicked");
     }
     
     @FXML
 	public void deleteUsers(MouseEvent me) {
-System.out.println("Delete Users Button");
+    	System.out.println("Delete Users Button");
 	}
     
     @FXML
-        public void displayUsers(MouseEvent me) {
+    public void displayUsers(MouseEvent me) {
     		System.out.println("Display Users Button");
     }
     
@@ -146,8 +147,4 @@ System.out.println("Delete Users Button");
         }
 	}
     
-    
-    
-    
-
 }
