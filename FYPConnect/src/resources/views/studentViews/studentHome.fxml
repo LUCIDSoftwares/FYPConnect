@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.studentViews.studentHomeController">
+   <children>
+      <Text layoutX="23.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to the Student Dashboard" wrappingWidth="383.13671875">
+         <font>
+            <Font name="Century Gothic Italic" size="18.0" />
+         </font>
+      </Text>
+      <Text fx:id="roll_name" layoutX="23.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" text="rollnum: Name" wrappingWidth="383.13671875">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="23.0" layoutY="165.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Group name:" wrappingWidth="98.13671875">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="23.0" layoutY="194.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Project name:" wrappingWidth="98.13671875">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Text>
+      <Text layoutX="23.0" layoutY="220.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Supervisor name:" wrappingWidth="127.13671875">
+         <font>
+            <Font name="Century Gothic" size="14.0" />
+         </font>
+      </Text>
+      <Text fx:id="group_name" layoutX="150.0" layoutY="164.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Group Selected" wrappingWidth="153.13671875">
+         <font>
+            <Font name="Century Gothic Italic" size="14.0" />
+         </font>
+      </Text>
+      <Text fx:id="project_name" layoutX="150.0" layoutY="193.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Project Selected" wrappingWidth="153.13671875">
+         <font>
+            <Font name="Century Gothic Italic" size="14.0" />
+         </font>
+      </Text>
+      <Text fx:id="supervisor_name" layoutX="150.0" layoutY="219.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Supervisor Selected" wrappingWidth="176.13671875">
+         <font>
+            <Font name="Century Gothic Italic" size="14.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#6ba9e4" height="358.0" layoutX="639.0" layoutY="300.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="322.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#c6ff37" height="278.0" layoutX="562.0" layoutY="161.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="253.0" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff5a38" height="278.0" layoutX="427.0" layoutY="283.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="253.0" />
+   </children>
+</AnchorPane>

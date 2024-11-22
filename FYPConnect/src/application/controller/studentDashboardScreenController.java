@@ -8,11 +8,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class studentDashboardScreenController {
 	private User user;
+	
+	@FXML
+	public Button HomeButton;
+	
+	@FXML
+	public AnchorPane ap;
+	
+	@FXML
+	public BorderPane bp;
 	
 	@FXML
 	public TextArea student_username;
@@ -50,4 +63,21 @@ public class studentDashboardScreenController {
             ex.printStackTrace();
         }
     }
+    
+    @FXML
+    public void home(MouseEvent me) {
+    	System.out.println("Home Button Clicked");
+    	loadPage("studentHome");
+    	
+    }
+    
+    
+	private void loadPage(String resource) {
+    	try {
+			Parent root = FXMLLoader.load(getClass().getResource("/resources/views/studentViews/" + resource + ".fxml"));
+			 bp.setCenter(root);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+    	}
 }
