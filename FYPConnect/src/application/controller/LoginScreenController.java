@@ -78,7 +78,7 @@ public class LoginScreenController {
 			}
 			else {
 				try {
-					Parent root = FXMLLoader.load(getClass().getResource("/resources/views/studentHomeScreen.fxml"));
+					Parent root = FXMLLoader.load(getClass().getResource("/resources/views/studentDashboardScreen.fxml"));
 					Scene scene = new Scene(root);
 					Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 					stage.setScene(scene);

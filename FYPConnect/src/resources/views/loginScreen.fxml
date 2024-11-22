@@ -5,38 +5,45 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.LoginScreenController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1010.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.LoginScreenController">
    <children>
-       <Label layoutX="225.0" layoutY="25.0" text="Login Page">
+       <Label layoutX="717.0" layoutY="165.0" text="Login to FYPConnect">
          <font>
             <Font name="Cooper Black" size="25.0" />
          </font>
       </Label>
-      <Label layoutX="56.0" layoutY="143.0" text="Username:">
+      <Label layoutX="717.0" layoutY="257.0" text="Username:">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <Label layoutX="56.0" layoutY="192.0" text="Password:">
+      <Label layoutX="714.0" layoutY="321.0" text="Password:">
          <font>
             <Font size="20.0" />
          </font>
       </Label>
-      <TextField fx:id="usernameTextField" layoutX="175.0" layoutY="146.0" prefHeight="26.0" prefWidth="273.0" />
-<PasswordField fx:id="passwordTextField" layoutX="175.0" layoutY="194.0" prefHeight="26.0" prefWidth="274.0" />
-      <Button fx:id="loginButton" layoutX="286.0" layoutY="290.0" mnemonicParsing="false" onAction="#login" text="Login">
+      <TextField fx:id="usernameTextField" layoutX="714.0" layoutY="287.0" prefHeight="26.0" prefWidth="273.0" />
+<PasswordField fx:id="passwordTextField" layoutX="714.0" layoutY="351.0" prefHeight="26.0" prefWidth="274.0" />
+      <Button fx:id="loginButton" layoutX="717.0" layoutY="440.0" mnemonicParsing="false" onAction="#login" prefHeight="31.0" prefWidth="274.0" text="Login">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <TextArea fx:id="failedTextBox" editable="false" layoutX="175.0" layoutY="237.0" prefHeight="37.0" prefWidth="274.0" style="-fx-background-color: rgba(255,255,255,0); -fx-text-fill: red;">
+      <TextArea fx:id="failedTextBox" editable="false" layoutX="714.0" layoutY="385.0" prefHeight="37.0" prefWidth="274.0" style="-fx-background-color: rgba(255,255,255,0); -fx-text-fill: red;">
          <font>
             <Font name="System Italic" size="12.0" />
          </font>
       </TextArea>
+      <ImageView fitHeight="751.0" fitWidth="701.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../fypconnectlogo.png" />
+         </image>
+      </ImageView>
       
    </children>
 </AnchorPane>
