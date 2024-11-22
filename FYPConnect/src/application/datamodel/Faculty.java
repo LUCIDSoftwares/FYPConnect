@@ -8,6 +8,9 @@ public class Faculty extends User {
 	public Faculty(int id, String name, String password, String username, String email) {
 		super(id, name, password, username, email);
 	}
+	public Faculty(String name, String username, String password, String email) {
+		super(-1, name, password, username, email);
+	}
 
 	@Override
 	public String toString() {
