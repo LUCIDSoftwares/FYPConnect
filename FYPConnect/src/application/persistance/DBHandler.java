@@ -167,8 +167,8 @@ public class DBHandler extends PersistanceHandler {
 				    SELECT groupT.name
 				    FROM groupT
 				    JOIN User AS leaderUser ON groupT.leader = leaderUser.ID
-				    JOIN User AS student1User ON groupT.student1 = student1User.ID
-				    JOIN User AS student2User ON groupT.student2 = student2User.ID
+				    LEFT JOIN User AS student1User ON groupT.student1 = student1User.ID
+				    LEFT JOIN User AS student2User ON groupT.student2 = student2User.ID
 				    WHERE leaderUser.username = ? OR student1User.username = ? OR student2User.username = ?;
 				""";
 
@@ -198,114 +198,297 @@ public class DBHandler extends PersistanceHandler {
 
 	@Override
 	public String getProjectName(String GroupName) {
-        this.establishConnection();
-        String projectName = null;
+		this.establishConnection();
+		String projectName = null;
 
-        String sqlQuery1 = """
-                SELECT project.title
-                FROM project
-                JOIN groupT ON project.ID = groupT.projectID
-                WHERE groupT.name = ?;
-            """;
+		String sqlQuery1 = """
+				    SELECT project.title
+				    FROM project
+				    JOIN groupT ON project.ID = groupT.projectID
+				    WHERE groupT.name = ?;
+				""";
 
-        try {
-            PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
-            preparedStatement1.setString(1, GroupName);
-            ResultSet result1 = preparedStatement1.executeQuery();
-            
-            projectName = "No Project Selected";
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, GroupName);
+			ResultSet result1 = preparedStatement1.executeQuery();
 
-            if (result1.next()) {
-                // If there's a result, get the project name
-                projectName = result1.getString("title");
-            }
+			projectName = "No Project Selected";
 
-            System.out.println("Project Name: " + projectName);
+			if (result1.next()) {
+				// If there's a result, get the project name
+				projectName = result1.getString("title");
+			}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        this.closeConnection();
-        return projectName;
+			System.out.println("Project Name: " + projectName);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		this.closeConnection();
+		return projectName;
 	}
-	
+
 	@Override
 	public User getSupervisor(String GroupName) {
 		this.establishConnection();
-        User supervisor = null;
+		User supervisor = null;
+
+		String sqlQuery1 = """
+				    SELECT u.ID, u.name, u.password, u.username, u.email
+				    FROM groupT g
+				    JOIN project p ON g.projectID = p.ID
+				    JOIN User u ON p.faculty_ID = u.ID
+				    WHERE g.name = ?;
+				""";
+
+		try {
+			// Prepare the SQL statement (assuming sqlQuery1 retrieves supervisor details)
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+
+			preparedStatement1.setString(1, GroupName);
+
+			// Execute the query
+			ResultSet result1 = preparedStatement1.executeQuery();
+
+			if (result1.next()) {
+				// If there's a result, create the supervisor using the factory
+				UserFactory userFactory = ConcreteUserFactory.getInstance();
+				supervisor = userFactory.createUser(result1);
+			} else {
+				// No supervisor found, handle appropriately
+				System.out.println("Supervisor Name: No Supervisor Selected");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return supervisor;
+	}
+
+	@Override
+	public String[] getGroupMembers(String groupName) {
+		this.establishConnection();
+		String[] groupMembers = new String[3];
+
+		String sqlQuery1 = """
+				    SELECT leaderUser.name AS leaderName, student1User.name AS student1Name, student2User.name AS student2Name
+				    FROM groupT
+				    JOIN User AS leaderUser ON groupT.leader = leaderUser.ID
+				    JOIN User AS student1User ON groupT.student1 = student1User.ID
+				    JOIN User AS student2User ON groupT.student2 = student2User.ID
+				    WHERE groupT.name = ?;
+				""";
+
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, groupName);
+			ResultSet result1 = preparedStatement1.executeQuery();
+
+			if (result1.next()) {
+				groupMembers[0] = result1.getString("leaderName");
+				groupMembers[1] = result1.getString("student1Name");
+				groupMembers[2] = result1.getString("student2Name");
+			} else {
+				groupMembers[0] = "No Leader Found";
+				groupMembers[1] = "No Student 1 Found";
+				groupMembers[2] = "No Student 2 Found";
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return groupMembers;
+	}
+
+	@Override
+	public void createGroup(String groupName, String username) {
+		this.establishConnection();
+
+		// Step 1: Query to get the User ID of the leader
+		String getUserIdQuery = "SELECT ID FROM User WHERE username = ?";
+
+		// Step 2: Insert the group into the groupT table
+		String insertGroupQuery = "INSERT INTO groupT (name, leader) VALUES (?, ?)";
+
+		try {
+			// Step 1: Fetch the User ID of the leader
+			PreparedStatement getUserIdStmt = this.connection.prepareStatement(getUserIdQuery);
+			getUserIdStmt.setString(1, username);
+			ResultSet userIdResult = getUserIdStmt.executeQuery();
+
+			if (userIdResult.next()) {
+				int leaderId = userIdResult.getInt("ID"); // Leader's User ID
+
+				// Step 2: Insert the group with the retrieved leader ID
+				PreparedStatement insertGroupStmt = this.connection.prepareStatement(insertGroupQuery);
+				insertGroupStmt.setString(1, groupName);
+				insertGroupStmt.setInt(2, leaderId);
+				insertGroupStmt.executeUpdate();
+
+				System.out.println("Group '" + groupName + "' created successfully with leader ID: " + leaderId);
+			} else {
+				System.out.println("No user found with the username: " + username);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+	}
+
+	@Override
+	public void sendInvite(String groupName, String username) {
+		this.establishConnection();
+
+		// Step 1: Query to get the User ID of the student
+		String getUserIdQuery = "SELECT ID FROM User WHERE username = ?";
+
+		// Step 2: Query to get the Group ID from the groupT table using the group name
+		String getGroupIdQuery = "SELECT ID FROM groupT WHERE name = ?";
+
+		// Step 3: Insert a new row into the Gr_Inv table to send the invite
+		String insertInviteQuery = "INSERT INTO Gr_Inv (GroupID, Stud_ID, Status) VALUES (?, ?, 'pending')";
+
+		try {
+			// Step 1: Fetch the User ID of the student
+			PreparedStatement getUserIdStmt = this.connection.prepareStatement(getUserIdQuery);
+			getUserIdStmt.setString(1, username);
+			ResultSet userIdResult = getUserIdStmt.executeQuery();
+
+			if (userIdResult.next()) {
+				int studentId = userIdResult.getInt("ID"); // Student's User ID
+
+				// Step 2: Fetch the Group ID from the groupT table
+				PreparedStatement getGroupIdStmt = this.connection.prepareStatement(getGroupIdQuery);
+				getGroupIdStmt.setString(1, groupName);
+				ResultSet groupIdResult = getGroupIdStmt.executeQuery();
+
+				if (groupIdResult.next()) {
+					int groupId = groupIdResult.getInt("ID"); // Group's ID
+
+					// Step 3: Insert a new row into the Gr_Inv table to send the invitation
+					PreparedStatement insertInviteStmt = this.connection.prepareStatement(insertInviteQuery);
+					insertInviteStmt.setInt(1, groupId); // Group ID
+					insertInviteStmt.setInt(2, studentId); // Student ID
+					insertInviteStmt.executeUpdate();
+
+					System.out.println("Invite sent to '" + username + "' for group '" + groupName + "'");
+				} else {
+					System.out.println("No group found with the name: " + groupName);
+				}
+			} else {
+				System.out.println("No user found with the username: " + username);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+	}
+
+	@Override
+	public User getStudent(String Username) {
+        this.establishConnection();
+        User user = null;
 
         String sqlQuery1 = """
-                SELECT u.ID, u.name, u.password, u.username, u.email
-                FROM groupT g
-                JOIN project p ON g.projectID = p.ID
-                JOIN User u ON p.faculty_ID = u.ID
-                WHERE g.name = ?;
+                SELECT *
+                FROM User
+                WHERE username = ?;
             """;
 
         try {
-            // Prepare the SQL statement (assuming sqlQuery1 retrieves supervisor details)
             PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
-
-            
-                preparedStatement1.setString(1, GroupName);
-            
-
-            // Execute the query
+            preparedStatement1.setString(1, Username);
             ResultSet result1 = preparedStatement1.executeQuery();
 
             if (result1.next()) {
-                // If there's a result, create the supervisor using the factory
                 UserFactory userFactory = ConcreteUserFactory.getInstance();
-                supervisor = userFactory.createUser(result1);
-            } else {
-                // No supervisor found, handle appropriately
-                System.out.println("Supervisor Name: No Supervisor Selected");
+                user = userFactory.createUser(result1);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-
-        this.closeConnection();
-        return supervisor;
+        finally {
+            this.closeConnection();
+        }
+        return user;
 	}
 	
 	
 	@Override
-	public String[] getGroupMembers(String groupName) {
+	public boolean checkGroupExists(String GroupName) {
 		this.establishConnection();
-        String[] groupMembers = new String[3];
+		boolean groupExists = false;
 
-        String sqlQuery1 = """
-                SELECT leaderUser.name AS leaderName, student1User.name AS student1Name, student2User.name AS student2Name
-                FROM groupT
-                JOIN User AS leaderUser ON groupT.leader = leaderUser.ID
-                JOIN User AS student1User ON groupT.student1 = student1User.ID
-                JOIN User AS student2User ON groupT.student2 = student2User.ID
-                WHERE groupT.name = ?;
-            """;
+		String sqlQuery1 = """
+				    SELECT *
+				    FROM groupT
+				    WHERE name = ?;
+				""";
 
-        try {
-            PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
-            preparedStatement1.setString(1, groupName);
-            ResultSet result1 = preparedStatement1.executeQuery();
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, GroupName);
+			ResultSet result1 = preparedStatement1.executeQuery();
 
-            if (result1.next()) {
-                groupMembers[0] = result1.getString("leaderName");
-                groupMembers[1] = result1.getString("student1Name");
-                groupMembers[2] = result1.getString("student2Name");
-            } else {
-                groupMembers[0] = "No Leader Found";
-                groupMembers[1] = "No Student 1 Found";
-                groupMembers[2] = "No Student 2 Found";
-            }
+			if (result1.next()) {
+				groupExists = true;
+			}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        this.closeConnection();
-        return groupMembers;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return groupExists;
 	}
+	
+	@Override
+	public void deleteGroup(String GroupName) {
+	    this.establishConnection();
+
+	    // SQL queries for each table
+	    String sqlQuery1 = "DELETE FROM Gr_Inv WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)";
+	    String sqlQuery2 = "DELETE FROM Gr_Req WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)";
+	    String sqlQuery3 = "DELETE FROM Ment_Req WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)";
+	    String sqlQuery4 = "DELETE FROM groupT WHERE name = ?";
+
+	    try {
+	        // Prepare and execute the first DELETE statement
+	        PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+	        preparedStatement1.setString(1, GroupName);
+	        preparedStatement1.executeUpdate();
+
+	        // Prepare and execute the second DELETE statement
+	        PreparedStatement preparedStatement2 = this.connection.prepareStatement(sqlQuery2);
+	        preparedStatement2.setString(1, GroupName);
+	        preparedStatement2.executeUpdate();
+
+	        // Prepare and execute the third DELETE statement
+	        PreparedStatement preparedStatement3 = this.connection.prepareStatement(sqlQuery3);
+	        preparedStatement3.setString(1, GroupName);
+	        preparedStatement3.executeUpdate();
+
+	        // Prepare and execute the fourth DELETE statement
+	        PreparedStatement preparedStatement4 = this.connection.prepareStatement(sqlQuery4);
+	        preparedStatement4.setString(1, GroupName);
+	        preparedStatement4.executeUpdate();
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    this.closeConnection();
+	}
+
+	
 }
