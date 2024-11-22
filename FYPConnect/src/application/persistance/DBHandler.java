@@ -6,7 +6,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
+import application.datamodel.Admin;
+import application.datamodel.Faculty;
+import application.datamodel.Student;
 import application.datamodel.User;
 import application.services.*;
 
@@ -59,11 +63,60 @@ public class DBHandler extends PersistanceHandler{
 	}
 	
 	@Override
-	public void createUser(User user) {
-		this.establishConnection();
+	public int createUser(User user) {
+		if(this.establishConnection() == false)
+			return -1;
 		
+		String sqlQuery1 = "INSERT INTO User (name, password, usertype, cgpa, username, email) VALUES (?, ?, ?, ?, ?, ?);";
+		int userId = -1;
+		
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, user.getName());
+			preparedStatement1.setString(2, user.getPassword());
+			
+			if(user instanceof Admin) {
+				preparedStatement1.setString(3, "Admin");
+				preparedStatement1.setDouble(4, 0.0);
+			}
+			else if(user instanceof Faculty) {
+				preparedStatement1.setString(3, "Faculty");
+				preparedStatement1.setDouble(4, 0.0);
+			}
+			else if(user instanceof Student) {
+				preparedStatement1.setString(3, "Student");
+				preparedStatement1.setDouble(4, ((Student) user).getCgpa());
+			}
+			
+			preparedStatement1.setString(5, user.getUsername());
+			preparedStatement1.setString(6, user.getEmail());
+			
+			if(preparedStatement1.executeUpdate() <= 0) {
+				System.out.println("Can not create a user");
+			}
+			else {
+				// get the ID of the user just created and inserted into the database
+				String sqlQuery2 = "SELECT MAX(ID)\r\n"
+						+ "FROM User;";
+				preparedStatement1 = this.connection.prepareStatement(sqlQuery2);
+				ResultSet result1 = preparedStatement1.executeQuery();
+				if(result1.next()) {
+					userId = result1.getInt(1);
+				}
+			}
+				
+			
+		} catch (SQLException e) {
+			// integrity constraint violation exception is already handled by code so no need to throw exception
+		    if(e instanceof SQLIntegrityConstraintViolationException == false) {
+				System.out.println("Exception thrown in the createUser(User) method of the DBHandler Class");
+				e.printStackTrace();
+		    }
+
+		}
 		
 		this.closeConnection();
+		return userId;
 	}
 	
 	@Override
@@ -116,7 +169,6 @@ public class DBHandler extends PersistanceHandler{
 		this.closeConnection();
 		return numOfUsers;
 	}
-
 	
 	@Override
 	public int getNumOfGroups() {
