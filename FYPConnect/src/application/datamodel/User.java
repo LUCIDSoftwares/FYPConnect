@@ -61,4 +61,8 @@ public abstract class User {
 		return "User [id=" + id + ", name=" + name + ", password=" + password + ", username=" + username + "email=" + email + "]";
 	}
 	
+	// basic solution to display cgpa in table view 
+	public double getCgpa() {
+		return 0.0;
+	}
 }

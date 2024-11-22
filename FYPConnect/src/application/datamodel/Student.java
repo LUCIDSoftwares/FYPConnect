@@ -21,6 +21,7 @@ public class Student extends User {
 		this.cgpa = cgpa;
 	}
 	
+	@Override
 	public double getCgpa() {
 		return cgpa;
 	}
