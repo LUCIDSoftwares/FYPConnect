@@ -1,5 +1,7 @@
 package application.services;
 
+import java.util.ArrayList;
+
 import application.datamodel.User;
 import application.persistance.ConcretePersistanceFactory;
 import application.persistance.PersistanceHandler;
@@ -18,6 +20,19 @@ public class AdminService {
 		return userId;
 		
 	};
+	
+	public ArrayList<User> getUserArrayList(String userType) {
+		
+		ArrayList<User> userArrayList = null;
+		userArrayList = this.dbHandler.getUserArrayListByType(userType);
+		
+		return userArrayList;
+	}
+	
+	public User getUserByUsername(String username) {
+		User user = this.dbHandler.retrieveUser(username);
+		return user;
+	}
 	
 	
 }
