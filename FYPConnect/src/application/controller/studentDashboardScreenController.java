@@ -45,6 +45,8 @@ public class studentDashboardScreenController {
         } else {
             System.out.println("No user found in session");
         }
+        HomeButton.fire();
+        loadPage("studentHome");
     }
     
     @FXML
