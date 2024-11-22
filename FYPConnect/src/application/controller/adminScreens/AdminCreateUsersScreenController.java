@@ -1,4 +1,4 @@
-package application.controller;
+package application.controller.adminScreens;
 
 import application.datamodel.User;
 import application.services.AdminService;

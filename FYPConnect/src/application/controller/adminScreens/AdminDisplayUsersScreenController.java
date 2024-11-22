@@ -1,4 +1,4 @@
-package application.controller;
+package application.controller.adminScreens;
 
 import java.util.ArrayList;
 
