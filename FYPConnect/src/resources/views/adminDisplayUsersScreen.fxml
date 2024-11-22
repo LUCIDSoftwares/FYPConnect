@@ -5,36 +5,37 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <AnchorPane fx:id="ap" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.AdminDisplayUsersScreenController">
    <children>
-      <Label layoutX="43.0" layoutY="34.0" text="Search by Username" />
-      <Label layoutX="43.0" layoutY="71.0" text="Enter Username:" />
-      <TextField fx:id="usernameSearchTextField" layoutX="204.0" layoutY="67.0" />
-      <Label layoutX="43.0" layoutY="112.0" text="Search by User Type" />
-      <Label layoutX="43.0" layoutY="150.0" text="Select User Type:" />
-      <RadioButton fx:id="studentRButton" layoutX="204.0" layoutY="150.0" mnemonicParsing="false" text="Student">
+      <Label layoutX="43.0" layoutY="14.0" text="Search by Username" />
+      <Label layoutX="44.0" layoutY="49.0" text="Enter Username:" />
+      <TextField fx:id="usernameSearchTextField" layoutX="204.0" layoutY="45.0" prefHeight="26.0" prefWidth="228.0" />
+      <Label layoutX="43.0" layoutY="85.0" text="Search by User Type" />
+      <Label layoutX="42.0" layoutY="121.0" text="Select User Type:" />
+      <RadioButton fx:id="studentRButton" layoutX="204.0" layoutY="121.0" mnemonicParsing="false" text="Student">
          <toggleGroup>
             <ToggleGroup fx:id="userType" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton fx:id="facultyRButton" layoutX="321.0" layoutY="150.0" mnemonicParsing="false" text="Faculty" toggleGroup="$userType" />
-      <RadioButton fx:id="adminRButton" layoutX="426.0" layoutY="150.0" mnemonicParsing="false" text="Administrator" toggleGroup="$userType" />
-      <Button layoutX="614.0" layoutY="59.0" mnemonicParsing="false" text="Button" />
-      <Button layoutX="614.0" layoutY="146.0" mnemonicParsing="false" text="Button" />
-      <Label layoutX="43.0" layoutY="200.0" text="Retrieved User Information:" />
-      <TableView fx:id="userInfoTableView" layoutX="50.0" layoutY="225.0" prefHeight="371.0" prefWidth="800.0">
+      <RadioButton fx:id="facultyRButton" layoutX="317.0" layoutY="121.0" mnemonicParsing="false" text="Faculty" toggleGroup="$userType" />
+      <RadioButton fx:id="adminRButton" layoutX="423.0" layoutY="121.0" mnemonicParsing="false" text="Administrator" toggleGroup="$userType" />
+      <Button fx:id="usernameSearchButton" layoutX="614.0" layoutY="45.0" mnemonicParsing="false" onAction="#populateByUsername" text="Search by Username" />
+      <Button fx:id="userTypeSearchButton" layoutX="614.0" layoutY="117.0" mnemonicParsing="false" onAction="#populateByUserType" text="Search by User Type" />
+      <Label layoutX="43.0" layoutY="162.0" text="Retrieved User Information:" />
+      <TableView fx:id="userInfoTableView" layoutX="50.0" layoutY="189.0" prefHeight="365.0" prefWidth="800.0">
         <columns>
-          <TableColumn fx:id="userIdColumn" prefWidth="75.0" text="User ID" />
-          <TableColumn fx:id="usernameColumn" prefWidth="75.0" text="Username" />
-            <TableColumn fx:id="passwordColumn" prefWidth="75.0" text="Password" />
-            <TableColumn fx:id="nameColumn" prefWidth="75.0" text="Name" />
-            <TableColumn fx:id="emailColumn" prefWidth="75.0" text="Email" />
+          <TableColumn fx:id="userIdColumn" minWidth="20.0" prefWidth="100.0" text="User ID" />
+          <TableColumn fx:id="usernameColumn" minWidth="130.0" prefWidth="84.0" text="Username" />
+            <TableColumn fx:id="passwordColumn" minWidth="130.0" prefWidth="86.39996337890625" text="Password" />
+            <TableColumn fx:id="nameColumn" minWidth="150.0" prefWidth="42.39996337890625" text="Name" />
+            <TableColumn fx:id="emailColumn" prefWidth="150.0" text="Email" />
         </columns>
       </TableView>
+      <TextArea fx:id="messageTextArea" editable="false" layoutX="275.0" layoutY="566.0" prefHeight="39.0" prefWidth="355.0" />
    </children>
 </AnchorPane>

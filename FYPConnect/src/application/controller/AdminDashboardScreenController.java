@@ -24,10 +24,8 @@ public class AdminDashboardScreenController {
     
     @FXML
     public BorderPane bp;
-    
     @FXML
     public AnchorPane ap;
-    
     @FXML
     public TextArea admin_username;
 
@@ -136,6 +134,7 @@ public class AdminDashboardScreenController {
     @FXML
     public void displayUsers(MouseEvent me) {
     		System.out.println("Display Users Button");
+    		this.loadPage("adminDisplayUsersScreen");
     }
     
 	private void loadPage(String page) {
