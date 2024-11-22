@@ -30,6 +30,20 @@ public class studentHomeController {
 	public Text supervisor_name;
 
 	@FXML
+	public Text group_members_title;
+	
+	@FXML
+	public Text group_leader;
+	
+	@FXML
+	public Text group_st1;
+	
+	@FXML
+	public Text group_st2;
+	
+	String[] groupMembers = new String[3];
+	
+	@FXML
 	public void initialize() {
 
 		user = UserSession.getInstance().getCurrentUser();
@@ -40,13 +54,38 @@ public class studentHomeController {
 			groupName = dbHandler.getGroupName(user.getUsername());
 			projectName = dbHandler.getProjectName(groupName);
 			supervisor = dbHandler.getSupervisor(groupName);
+			groupMembers = dbHandler.getGroupMembers(groupName);
+			
 			group_name.setText(groupName);
 			project_name.setText(projectName);
 			if (supervisor != null)
 				supervisor_name.setText(supervisor.getName());
+			if(!(groupMembers[0] == "No Leader Found" ||
+            groupMembers[1] == "No Student 1 Found" ||
+            groupMembers[2] == "No Student 2 Found")) {
+				group_leader.setText(groupMembers[0]);
+				group_st1.setText(groupMembers[1]);
+				group_st2.setText(groupMembers[2]);
+				
+				if (group_leader.getText().equals(user.getName())) {
+					group_leader.setStyle("-fx-fill: red;");
+				}
+				else if (group_st1.getText().equals(user.getName())) {
+					group_st1.setStyle("-fx-fill: red;");
+				} 
+				else if (group_st2.getText().equals(user.getName())) {
+					group_st2.setStyle("-fx-fill: red;");
+				}
+			}
+			else {
+				group_members_title.setText("No Group Members Found");
+			}
+			
 		} else {
 			System.out.println("No user found in session");
 		}
 
 	}
+	
+	
 }

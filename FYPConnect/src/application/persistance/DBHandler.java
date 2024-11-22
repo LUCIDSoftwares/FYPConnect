@@ -271,4 +271,41 @@ public class DBHandler extends PersistanceHandler {
         return supervisor;
 	}
 	
+	
+	@Override
+	public String[] getGroupMembers(String groupName) {
+		this.establishConnection();
+        String[] groupMembers = new String[3];
+
+        String sqlQuery1 = """
+                SELECT leaderUser.name AS leaderName, student1User.name AS student1Name, student2User.name AS student2Name
+                FROM groupT
+                JOIN User AS leaderUser ON groupT.leader = leaderUser.ID
+                JOIN User AS student1User ON groupT.student1 = student1User.ID
+                JOIN User AS student2User ON groupT.student2 = student2User.ID
+                WHERE groupT.name = ?;
+            """;
+
+        try {
+            PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+            preparedStatement1.setString(1, groupName);
+            ResultSet result1 = preparedStatement1.executeQuery();
+
+            if (result1.next()) {
+                groupMembers[0] = result1.getString("leaderName");
+                groupMembers[1] = result1.getString("student1Name");
+                groupMembers[2] = result1.getString("student2Name");
+            } else {
+                groupMembers[0] = "No Leader Found";
+                groupMembers[1] = "No Student 1 Found";
+                groupMembers[2] = "No Student 2 Found";
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        this.closeConnection();
+        return groupMembers;
+	}
 }

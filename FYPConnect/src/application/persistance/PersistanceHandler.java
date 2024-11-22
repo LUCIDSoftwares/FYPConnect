@@ -19,4 +19,6 @@ public abstract class PersistanceHandler {
 	public abstract String getProjectName(String GroupName);
 	
 	public abstract User getSupervisor(String GroupName);
+	
+	public abstract String[] getGroupMembers(String GroupName);
 }
