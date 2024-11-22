@@ -139,7 +139,7 @@ public class AdminDashboardScreenController {
     
 	private void loadPage(String page) {
 		try {
-            Parent root = FXMLLoader.load(getClass().getResource("/resources/views/" + page + ".fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/resources/views/adminScreens/" + page + ".fxml"));
             bp.setCenter(root);
         } catch (Exception ex) {
             ex.printStackTrace();
