@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
 
 import application.datamodel.Admin;
 import application.datamodel.Faculty;
@@ -148,6 +149,32 @@ public class DBHandler extends PersistanceHandler{
 	}
 	
 	@Override
+	public User retrieveUser(String username) {
+		this.establishConnection();
+		User user = null;
+		
+		String sqlQuery1 = "SELECT * \r\n"
+				+ "FROM User \r\n"
+				+ "WHERE username = ?;";
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, username);
+			ResultSet result1 = preparedStatement1.executeQuery();
+			if(result1.next()) {
+				UserFactory concreteUserFactory = ConcreteUserFactory.getInstance();
+				user = concreteUserFactory.createUser(result1);
+			}
+		
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the retrieveUser(String) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return user;		
+	}
+	
+	@Override
 	public int getNumOfUsers() {
 		this.establishConnection();
 		int numOfUsers = 0;
@@ -215,6 +242,37 @@ public class DBHandler extends PersistanceHandler{
 		this.closeConnection();
 		return numOfProjects;
 	}
+
 	
+	@Override
+	public ArrayList<User> getUserArrayListByType(String userType) {
+		if(this.establishConnection() == false)
+			return null;
+		
+		
+		ArrayList<User> userArrayList = null;
+//		boolean studentFlag = false;
+//		if(userType.equalsIgnoreCase("Student") == true) {
+//			studentFlag = true;
+//		}
+		String sqlQuery1 = "SELECT ID, name, password, cgpa, username, email\r\n"
+				+ "FROM User\r\n"
+				+ "WHERE usertype = ?;";
+		try {
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setString(1, userType);
+			
+			ResultSet result1 = statement1.executeQuery();
+			UserFactory concreteUserFactory = ConcreteUserFactory.getInstance();
+			userArrayList = concreteUserFactory.createUserArrayList(userType, result1);
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getUserArrayListByType(String) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return userArrayList;
+	}
 	
 }
