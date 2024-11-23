@@ -134,7 +134,7 @@ public class joinGroupsController {
 
 			    if (isAccepted) {
 			        invite_text_1.setText("Request Accepted");
-			        invite_text_2.setText("You are now a member of the group: " + selectedperson);
+			        invite_text_2.setText( selectedperson + " is now a member of your group.");
 			    } else {
 			        invite_text_1.setText("Request Not Accepted");
 			        invite_text_2.setText("Unable to join the group. Please try again or contact support.");
