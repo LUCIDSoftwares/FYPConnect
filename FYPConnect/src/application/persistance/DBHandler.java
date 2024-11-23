@@ -395,35 +395,33 @@ public class DBHandler extends PersistanceHandler {
 
 	@Override
 	public User getStudent(String Username) {
-        this.establishConnection();
-        User user = null;
+		this.establishConnection();
+		User user = null;
 
-        String sqlQuery1 = """
-                SELECT *
-                FROM User
-                WHERE username = ?;
-            """;
+		String sqlQuery1 = """
+				    SELECT *
+				    FROM User
+				    WHERE username = ?;
+				""";
 
-        try {
-            PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
-            preparedStatement1.setString(1, Username);
-            ResultSet result1 = preparedStatement1.executeQuery();
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, Username);
+			ResultSet result1 = preparedStatement1.executeQuery();
 
-            if (result1.next()) {
-                UserFactory userFactory = ConcreteUserFactory.getInstance();
-                user = userFactory.createUser(result1);
-            }
+			if (result1.next()) {
+				UserFactory userFactory = ConcreteUserFactory.getInstance();
+				user = userFactory.createUser(result1);
+			}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finally {
-            this.closeConnection();
-        }
-        return user;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+		return user;
 	}
-	
-	
+
 	@Override
 	public boolean checkGroupExists(String GroupName) {
 		this.establishConnection();
@@ -451,43 +449,43 @@ public class DBHandler extends PersistanceHandler {
 		this.closeConnection();
 		return groupExists;
 	}
-	
+
 	@Override
 	public void deleteGroup(String GroupName) {
-	    this.establishConnection();
+		this.establishConnection();
 
-	    // SQL queries for each table
-	    String sqlQuery1 = "DELETE FROM Gr_Inv WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)";
-	    String sqlQuery2 = "DELETE FROM Gr_Req WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)";
-	    String sqlQuery3 = "DELETE FROM Ment_Req WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)";
-	    String sqlQuery4 = "DELETE FROM groupT WHERE name = ?";
+		// SQL queries for each table
+		String sqlQuery1 = "DELETE FROM Gr_Inv WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)";
+		String sqlQuery2 = "DELETE FROM Gr_Req WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)";
+		String sqlQuery3 = "DELETE FROM Ment_Req WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)";
+		String sqlQuery4 = "DELETE FROM groupT WHERE name = ?";
 
-	    try {
-	        // Prepare and execute the first DELETE statement
-	        PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
-	        preparedStatement1.setString(1, GroupName);
-	        preparedStatement1.executeUpdate();
+		try {
+			// Prepare and execute the first DELETE statement
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, GroupName);
+			preparedStatement1.executeUpdate();
 
-	        // Prepare and execute the second DELETE statement
-	        PreparedStatement preparedStatement2 = this.connection.prepareStatement(sqlQuery2);
-	        preparedStatement2.setString(1, GroupName);
-	        preparedStatement2.executeUpdate();
+			// Prepare and execute the second DELETE statement
+			PreparedStatement preparedStatement2 = this.connection.prepareStatement(sqlQuery2);
+			preparedStatement2.setString(1, GroupName);
+			preparedStatement2.executeUpdate();
 
-	        // Prepare and execute the third DELETE statement
-	        PreparedStatement preparedStatement3 = this.connection.prepareStatement(sqlQuery3);
-	        preparedStatement3.setString(1, GroupName);
-	        preparedStatement3.executeUpdate();
+			// Prepare and execute the third DELETE statement
+			PreparedStatement preparedStatement3 = this.connection.prepareStatement(sqlQuery3);
+			preparedStatement3.setString(1, GroupName);
+			preparedStatement3.executeUpdate();
 
-	        // Prepare and execute the fourth DELETE statement
-	        PreparedStatement preparedStatement4 = this.connection.prepareStatement(sqlQuery4);
-	        preparedStatement4.setString(1, GroupName);
-	        preparedStatement4.executeUpdate();
+			// Prepare and execute the fourth DELETE statement
+			PreparedStatement preparedStatement4 = this.connection.prepareStatement(sqlQuery4);
+			preparedStatement4.setString(1, GroupName);
+			preparedStatement4.executeUpdate();
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	    this.closeConnection();
+		this.closeConnection();
 	}
 
 	@Override
@@ -518,46 +516,44 @@ public class DBHandler extends PersistanceHandler {
 		this.closeConnection();
 		return isLeader;
 	}
-	
+
 	@Override
 	public String[] getGroupRequests(String username) {
-	    this.establishConnection();
-	    String[] requestSenders = new String[10]; // Adjust the array size as needed
+		this.establishConnection();
+		String[] requestSenders = new String[10]; // Adjust the array size as needed
 
-	    String sqlQuery = """
-	                SELECT User.username
-	                FROM Gr_Req
-	                JOIN groupT ON Gr_Req.GroupID = groupT.ID
-	                JOIN User ON Gr_Req.Stud_ID = User.ID
-	                WHERE groupT.leader = (
-	                    SELECT ID 
-	                    FROM User 
-	                    WHERE username = ?
-	                );
-	            """;
+		String sqlQuery = """
+				    SELECT User.username
+				    FROM Gr_Req
+				    JOIN groupT ON Gr_Req.GroupID = groupT.ID
+				    JOIN User ON Gr_Req.Stud_ID = User.ID
+				    WHERE groupT.leader = (
+				        SELECT ID
+				        FROM User
+				        WHERE username = ?
+				    );
+				""";
 
-	    try {
-	        PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery);
-	        preparedStatement.setString(1, username);
-	        ResultSet resultSet = preparedStatement.executeQuery();
+		try {
+			PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery);
+			preparedStatement.setString(1, username);
+			ResultSet resultSet = preparedStatement.executeQuery();
 
-	        int i = 0;
-	        while (resultSet.next()) {
-	            requestSenders[i] = resultSet.getString("username");
-	            i++;
-	        }
+			int i = 0;
+			while (resultSet.next()) {
+				requestSenders[i] = resultSet.getString("username");
+				i++;
+			}
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    } finally {
-	        this.closeConnection();
-	    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
 
-	    return requestSenders;
+		return requestSenders;
 	}
 
-	
-	
 	@Override
 	public String[] getGroupInvitations(String Username) {
 		this.establishConnection();
@@ -589,7 +585,7 @@ public class DBHandler extends PersistanceHandler {
 		this.closeConnection();
 		return invitations;
 	}
-	
+
 	@Override
 	public String[] getAvailableGroups() {
 		this.establishConnection();
@@ -618,36 +614,101 @@ public class DBHandler extends PersistanceHandler {
 		this.closeConnection();
 		return availableGroups;
 	}
-	
+
 	@Override
 	public String getGroupLeader(String groupName) {
-	    String leaderUsername = null;
+		String leaderUsername = null;
 
-	    String sqlQuery = """
-	        SELECT User.username
-	        FROM groupT
-	        JOIN User ON groupT.leader = User.ID
-	        WHERE groupT.name = ?;
+		String sqlQuery = """
+				    SELECT User.username
+				    FROM groupT
+				    JOIN User ON groupT.leader = User.ID
+				    WHERE groupT.name = ?;
+				""";
+
+		try {
+			this.establishConnection();
+			try (PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery)) {
+				preparedStatement.setString(1, groupName);
+				try (ResultSet resultSet = preparedStatement.executeQuery()) {
+					if (resultSet.next()) {
+						leaderUsername = resultSet.getString("username"); // Fetch only the username
+					}
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+
+		return leaderUsername;
+	}
+
+	@Override
+	public boolean acceptInvite(String groupName, String username) {
+	    this.establishConnection();
+	    System.out.println("Accepting invite for group '" + groupName + "' by user '" + username + "'");
+	    boolean res = false;
+
+	    // SQL query to delete the invite
+	    String deleteInviteQuery = """
+	        DELETE FROM Gr_Inv
+	        WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
+	          AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
 	    """;
 
+	    // SQL queries to check and update group slots
+	    String checkStudent1Query = "SELECT student1 FROM groupT WHERE name = ?";
+	    String checkStudent2Query = "SELECT student2 FROM groupT WHERE name = ?";
+	    String updateStudent1Query = "UPDATE groupT SET student1 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
+	    String updateStudent2Query = "UPDATE groupT SET student2 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
+
 	    try {
-	        this.establishConnection();
-	        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery)) {
-	            preparedStatement.setString(1, groupName);
-	            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-	                if (resultSet.next()) {
-	                    leaderUsername = resultSet.getString("username"); // Fetch only the username
-	                }
+	        // Step 1: Delete the invite
+	        PreparedStatement deleteInviteStmt = this.connection.prepareStatement(deleteInviteQuery);
+	        deleteInviteStmt.setString(1, groupName);
+	        deleteInviteStmt.setString(2, username);
+	        deleteInviteStmt.executeUpdate();
+
+	        // Step 2: Check and update the appropriate slot
+	        PreparedStatement checkStudent1Stmt = this.connection.prepareStatement(checkStudent1Query);
+	        checkStudent1Stmt.setString(1, groupName);
+	        ResultSet result1 = checkStudent1Stmt.executeQuery();
+
+	        if (result1.next() && (result1.getString("student1") == null || result1.getString("student1").isEmpty())) {
+	            // Update student1 if it's empty
+	            PreparedStatement updateStudent1Stmt = this.connection.prepareStatement(updateStudent1Query);
+	            updateStudent1Stmt.setString(1, username);
+	            updateStudent1Stmt.setString(2, groupName);
+	            updateStudent1Stmt.executeUpdate();
+	            System.out.println("Invite accepted: " + username + " added as student1 in group '" + groupName + "'");
+	            res = true;
+	        } else {
+	            // Check and update student2 if student1 is already filled
+	            PreparedStatement checkStudent2Stmt = this.connection.prepareStatement(checkStudent2Query);
+	            checkStudent2Stmt.setString(1, groupName);
+	            ResultSet result2 = checkStudent2Stmt.executeQuery();
+
+	            if (result2.next() && (result2.getString("student2") == null || result2.getString("student2").isEmpty())) {
+	                PreparedStatement updateStudent2Stmt = this.connection.prepareStatement(updateStudent2Query);
+	                updateStudent2Stmt.setString(1, username);
+	                updateStudent2Stmt.setString(2, groupName);
+	                updateStudent2Stmt.executeUpdate();
+	                System.out.println("Invite accepted: " + username + " added as student2 in group '" + groupName + "'");
+	                res = true;
+	            } else {
+	                System.out.println("Error: Both student slots are full in group '" + groupName + "'");
+	                
 	            }
 	        }
+
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    } finally {
 	        this.closeConnection();
 	    }
-
-	    return leaderUsername;
+	    return res;
 	}
 
-	
 }

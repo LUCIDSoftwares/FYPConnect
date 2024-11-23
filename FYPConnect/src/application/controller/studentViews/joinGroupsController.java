@@ -120,7 +120,27 @@ public class joinGroupsController {
 	
 	@FXML
 	public void acceptInvite() {
+		if (invitatonsCombo.getValue() == null || invitatonsCombo.getValue().isEmpty()) {
+		    invite_text_1.setText("Error");
+		    invite_text_2.setText("No group selected. Please select a group.");
+		    return;
+		}
 		
+		// if the user is a leader, accept the request
+		if (isLeader) {
+			dbHandler.acceptInvite(invitatonsCombo.getValue(), user.getUsername());
+			invite_text_1.setText("Request Accepted");
+		} else {
+			// if the user is not a leader, accept the invitation
+			boolean result = dbHandler.acceptInvite(invitatonsCombo.getValue(), user.getUsername());
+			if (result) {
+			    invite_text_1.setText("Invitation Accepted");
+			    invite_text_2.setText("You are now a member of the group");
+			} else {
+			    invite_text_1.setText("Error");
+			    invite_text_2.setText("Unable to join the group. It may be full.");
+			}
+		}
 	}
 	
 	@FXML
