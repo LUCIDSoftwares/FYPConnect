@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ComboBox layoutX="258.0" layoutY="166.0" prefHeight="25.0" prefWidth="351.0" promptText="Available Projects" />
+      <Text layoutX="258.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to the Project Manager">
+         <font>
+            <Font name="Century Gothic Bold Italic" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="258.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a Project:">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font>
+      </Text>
+      <Text layoutX="150.0" layoutY="272.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+      <Text layoutX="150.0" layoutY="405.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+      <Text layoutX="353.0" layoutY="340.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+      <Text layoutX="206.0" layoutY="420.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+      <Text layoutX="320.0" layoutY="398.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+      <Text layoutX="566.0" layoutY="291.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+   </children>
+</AnchorPane>

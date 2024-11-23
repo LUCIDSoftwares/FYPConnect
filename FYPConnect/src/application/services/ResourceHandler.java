@@ -39,7 +39,7 @@ public class ResourceHandler {
 	public String downloadResource(String fileTitle, String filePath) {
 		//String fileTitle = "My Thesis";
 		//String filePath = "C:/Users/HP/Downloads/22I-0789_AdmitCard-1.pdf/";
-		
+
 		// extract the extension from the give file path
 		String ext = filePath.substring(filePath.lastIndexOf("."), filePath.length());
 		File originalFile = new File(filePath);
@@ -54,8 +54,14 @@ public class ResourceHandler {
 		String formattedDate = sdf.format(date);
 		// remove all space from the file title using regex
 		fileTitle = fileTitle.replaceAll("\\s+","");
+		
+		String systemdownloads = System.getProperty("user.home");
+		// replace the '\' character with '/' character
+		systemdownloads = systemdownloads.replace("\\", "/");
+			
+		
 		// assign the new path where the downloaded file is to appear with its name
-		String newFilePath = "C:/Users/HP/Downloads/" + fileTitle + formattedDate + ext;
+		String newFilePath = systemdownloads + "/Downloads/" + fileTitle + formattedDate + ext;
 		File newFile = new File(newFilePath);
 		
 		// now copying the file
