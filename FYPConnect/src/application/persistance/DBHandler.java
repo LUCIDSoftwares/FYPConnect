@@ -6,7 +6,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
+import application.datamodel.Resource;
 import application.datamodel.User;
 import application.services.*;
 
@@ -856,6 +858,7 @@ public class DBHandler extends PersistanceHandler {
 	}
 
 	@Override
+//<<<<<<< Updated upstream
 	public boolean declineRequest(String groupName, String username) {
 		this.establishConnection();
 		System.out.println("Declining request for group '" + groupName + "' by user '" + username + "'");
@@ -884,4 +887,97 @@ public class DBHandler extends PersistanceHandler {
 		}
 		return res;
 	}
+//=======
+	public ArrayList<Resource> getAllResources() {
+		if(this.establishConnection() == false)
+			return null;
+		
+		ArrayList<Resource> resourceArrayList = null;
+		
+		try {
+			String sqlQuery1 = "SELECT *\r\n"
+					+ "FROM Resource;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			ResultSet result1 = statement1.executeQuery();			
+			
+			// if there is at least one result from the query
+			if(result1.next()) {
+				resourceArrayList = new ArrayList<Resource>();
+				Resource resource = new Resource(
+						result1.getInt("ID"),
+						result1.getString("title"),
+						result1.getString("description"),
+						result1.getString("uploader_username"),
+						result1.getString("filePath") );
+				resourceArrayList.add(resource);
+				
+				// for the rest of the records
+				while(result1.next()) {
+					resource = new Resource(
+							result1.getInt("ID"),
+							result1.getString("title"),
+							result1.getString("description"),
+							result1.getString("uploader_username"),
+							result1.getString("filePath") );
+					resourceArrayList.add(resource);
+				}
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getAllResources() method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return resourceArrayList;
+	}
+	
+	public ArrayList<Resource> getResourcesByTitle(String title) {
+		if(this.establishConnection() == false)
+			return null;
+		
+		ArrayList<Resource> resourceArrayList = null;
+		
+		try {
+			String sqlQuery1 = "SELECT *\r\n"
+					+ "FROM Resource\r\n"
+					+ "WHERE title like ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setString(1, "%" + title + "%");
+			ResultSet result1 = statement1.executeQuery();			
+			
+			// if there is at least one result from the query
+			if(result1.next()) {
+				resourceArrayList = new ArrayList<Resource>();
+				Resource resource = new Resource(
+						result1.getInt("ID"),
+						result1.getString("title"),
+						result1.getString("description"),
+						result1.getString("uploader_username"),
+						result1.getString("filePath") );
+				resourceArrayList.add(resource);
+				
+				// for the rest of the records
+				while(result1.next()) {
+					resource = new Resource(
+							result1.getInt("ID"),
+							result1.getString("title"),
+							result1.getString("description"),
+							result1.getString("uploader_username"),
+							result1.getString("filePath") );
+					resourceArrayList.add(resource);
+				}
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getAllResources(String) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return resourceArrayList;		
+	}
+	
+//>>>>>>> Stashed changes
 }
+

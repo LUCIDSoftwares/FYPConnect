@@ -1,5 +1,8 @@
 package application.persistance;
 
+import java.util.ArrayList;
+
+import application.datamodel.Resource;
 import application.datamodel.User;
 
 public abstract class PersistanceHandler {
@@ -42,6 +45,7 @@ public abstract class PersistanceHandler {
 	
 	public abstract String getGroupLeader(String GroupName);
 	
+//<<<<<<< Updated upstream
 	public abstract boolean acceptInvite(String GroupName, String Username);
 	
 	public abstract boolean declineInvite(String GroupName, String Username);
@@ -51,4 +55,10 @@ public abstract class PersistanceHandler {
 	public abstract boolean acceptRequest(String GroupName, String Username);
 	
 	public abstract boolean declineRequest(String GroupName, String Username);
+//=======
+	public abstract ArrayList<Resource> getAllResources();
+	
+	public abstract ArrayList<Resource> getResourcesByTitle(String title);
+	
+//>>>>>>> Stashed changes
 }
