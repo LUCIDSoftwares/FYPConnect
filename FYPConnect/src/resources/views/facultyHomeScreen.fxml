@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+ -->
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.shape.Line?>
 
+<!-- <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" /> -->
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" />
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.FacultyScreenController">
+   <children>
+      <AnchorPane layoutX="402.0" layoutY="219.0" prefHeight="200.0" prefWidth="200.0" />
+      <BorderPane layoutX="-24.0" layoutY="42.0" prefHeight="600.0" prefWidth="1100.0" stylesheets="@../../Design/faculty.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <left>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <AnchorPane blendMode="DARKEN" layoutX="1.0" prefHeight="560.0" prefWidth="210.0" styleClass="main-bg" stylesheets="@../../Design/faculty.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-11.0" AnchorPane.topAnchor="0.0">
+                     <children>
+<!--                         <FontAwesomeIconView fill="#fcfafa" glyphName="USER" layoutX="73.0" layoutY="48.0" selectionEnd="4" selectionStart="4" size="40" />
+ -->                        <Label graphicTextGap="10.0" layoutX="42.0" layoutY="65.0" text="Welcome Faculty" textFill="#fff9f9" />
+                        <Button fx:id="DashboardButton" layoutX="5.0" layoutY="155.0" mnemonicParsing="false" onAction="#Dashboard1" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Dashboard" />
+                        <Button fx:id="UploadprojectsButton" layoutX="5.0" layoutY="201.0" mnemonicParsing="false" onAction="#UploadProjects" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Upload Projects" />
+                        <Button fx:id="SettimelineButton" layoutX="4.0" layoutY="355.0" mnemonicParsing="false" onAction="#SetTimeline" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Set Timeline" />
+                        <Button fx:id="GradeStudentsButton" layoutX="4.0" layoutY="301.0" mnemonicParsing="false" onAction="#GradeStudents" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Grade Students" />
+                        <Button fx:id="UpdateResourceButton" layoutX="5.0" layoutY="245.0" mnemonicParsing="false" onAction="#UploadResources" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Upload Resources" />
+                    <!--     <FontAwesomeIconView fill="#ebd9d9" glyphName="DASHBOARD" layoutX="46.0" layoutY="172.0" />
+                        <FontAwesomeIconView fill="#ebd9d9" glyphName="PLUS_CIRCLE" layoutX="47.0" layoutY="218.0" />
+                        <FontAwesomeIconView fill="#ebd9d9" glyphName="PLUS_CIRCLE" layoutX="42.0" layoutY="263.0" text="" />
+                        <FontAwesomeIconView fill="#ebd9d9" glyphName="SET" layoutX="47.0" layoutY="318.0" />
+                        <FontAwesomeIconView fill="#ebd9d9" layoutX="46.0" layoutY="372.0" /> -->
+                        <Line endX="100.0" layoutX="103.0" layoutY="120.0" startX="-100.0" />
+                        <Button fx:id="MentorshipreqButton" layoutX="2.0" layoutY="404.0" mnemonicParsing="false" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Memtorship Request" />
+                     </children>
+                  </AnchorPane>
+               </children>
+            </AnchorPane>
+         </left>
+         <top>
+            <AnchorPane prefHeight="40.0" prefWidth="1100.0" styleClass="main-bg" stylesheets="@../../Design/faculty.css" BorderPane.alignment="CENTER">
+               <children>
+                  <Label layoutX="32.0" layoutY="12.0" text="Faculty Dashboard" textFill="#f5efef" />
+                  <Button layoutX="1025.0" layoutY="8.0" mnemonicParsing="false" onAction="#handleLogout" styleClass="close" text="close" textFill="#eee7e7">
+                     <stylesheets>
+                        <URL value="@../../Design/faculty.css" />
+                        <URL value="@../../Design/faculty.css" />
+                     </stylesheets>
+                  </Button>
+               </children>
+            </AnchorPane>
+         </top>
+      </BorderPane>
+   </children>
+</AnchorPane>
