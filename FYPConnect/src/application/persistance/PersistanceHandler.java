@@ -1,7 +1,9 @@
 package application.persistance;
 
+import java.util.Date;
 import java.util.ArrayList;
 
+import application.datamodel.Deliverable;
 import application.datamodel.Resource;
 import application.datamodel.User;
 
@@ -61,6 +63,10 @@ public abstract class PersistanceHandler {
 	public abstract ArrayList<Resource> getAllResources();
 	
 	public abstract ArrayList<Resource> getResourcesByTitle(String title);
+	
+	public abstract ArrayList<Deliverable> getAllDeliverables();
+	
+	public abstract boolean saveSubmission(int deliverableId, String groupId, Date submissionTime, String filePath);
 	
 //>>>>>>> Stashed changes
 }

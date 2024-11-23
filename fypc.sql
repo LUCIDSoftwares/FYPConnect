@@ -88,7 +88,7 @@ create table Deliverable(
 create table Submission(
 	ID int primary key auto_increment,
 	Del_ID int not null, 	# Deliverable ID
-    submission_time time not null,
+    submission_time datetime not null,
     groupID int not null,
     content_link varchar(100),
     foreign key (Del_ID) references Deliverable(ID),

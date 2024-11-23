@@ -1,13 +1,14 @@
 package application.persistance;
 
 import java.sql.Connection;
-
+import java.util.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import application.datamodel.Deliverable;
 import application.datamodel.Resource;
 import application.datamodel.User;
 import application.services.*;
@@ -93,7 +94,7 @@ public class DBHandler extends PersistanceHandler {
 		this.closeConnection();
 		return user;
 	}
-	
+
 	@Override
 	public User retrieveUser(String username) {
 		this.establishConnection();
@@ -117,7 +118,6 @@ public class DBHandler extends PersistanceHandler {
 		this.closeConnection();
 		return user;
 	}
-
 
 	@Override
 	public int getNumOfUsers() {
@@ -674,70 +674,72 @@ public class DBHandler extends PersistanceHandler {
 
 	@Override
 	public boolean acceptInvite(String groupName, String username) {
-	    this.establishConnection();
-	    System.out.println("Accepting invite for group '" + groupName + "' by user '" + username + "'");
-	    boolean res = false;
+		this.establishConnection();
+		System.out.println("Accepting invite for group '" + groupName + "' by user '" + username + "'");
+		boolean res = false;
 
-	    // SQL query to delete the invite
-	    String deleteInviteQuery = """
-	        DELETE FROM Gr_Inv
-	        WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
-	          AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
-	    """;
+		// SQL query to delete the invite
+		String deleteInviteQuery = """
+				    DELETE FROM Gr_Inv
+				    WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
+				      AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
+				""";
 
-	    // SQL queries to check and update group slots
-	    String checkStudent1Query = "SELECT student1 FROM groupT WHERE name = ?";
-	    String checkStudent2Query = "SELECT student2 FROM groupT WHERE name = ?";
-	    String updateStudent1Query = "UPDATE groupT SET student1 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
-	    String updateStudent2Query = "UPDATE groupT SET student2 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
+		// SQL queries to check and update group slots
+		String checkStudent1Query = "SELECT student1 FROM groupT WHERE name = ?";
+		String checkStudent2Query = "SELECT student2 FROM groupT WHERE name = ?";
+		String updateStudent1Query = "UPDATE groupT SET student1 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
+		String updateStudent2Query = "UPDATE groupT SET student2 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
 
-	    try {
-	        // Step 1: Delete the invite
-	        PreparedStatement deleteInviteStmt = this.connection.prepareStatement(deleteInviteQuery);
-	        deleteInviteStmt.setString(1, groupName);
-	        deleteInviteStmt.setString(2, username);
-	        deleteInviteStmt.executeUpdate();
+		try {
+			// Step 1: Delete the invite
+			PreparedStatement deleteInviteStmt = this.connection.prepareStatement(deleteInviteQuery);
+			deleteInviteStmt.setString(1, groupName);
+			deleteInviteStmt.setString(2, username);
+			deleteInviteStmt.executeUpdate();
 
-	        // Step 2: Check and update the appropriate slot
-	        PreparedStatement checkStudent1Stmt = this.connection.prepareStatement(checkStudent1Query);
-	        checkStudent1Stmt.setString(1, groupName);
-	        ResultSet result1 = checkStudent1Stmt.executeQuery();
+			// Step 2: Check and update the appropriate slot
+			PreparedStatement checkStudent1Stmt = this.connection.prepareStatement(checkStudent1Query);
+			checkStudent1Stmt.setString(1, groupName);
+			ResultSet result1 = checkStudent1Stmt.executeQuery();
 
-	        if (result1.next() && (result1.getString("student1") == null || result1.getString("student1").isEmpty())) {
-	            // Update student1 if it's empty
-	            PreparedStatement updateStudent1Stmt = this.connection.prepareStatement(updateStudent1Query);
-	            updateStudent1Stmt.setString(1, username);
-	            updateStudent1Stmt.setString(2, groupName);
-	            updateStudent1Stmt.executeUpdate();
-	            System.out.println("Invite accepted: " + username + " added as student1 in group '" + groupName + "'");
-	            res = true;
-	        } else {
-	            // Check and update student2 if student1 is already filled
-	            PreparedStatement checkStudent2Stmt = this.connection.prepareStatement(checkStudent2Query);
-	            checkStudent2Stmt.setString(1, groupName);
-	            ResultSet result2 = checkStudent2Stmt.executeQuery();
+			if (result1.next() && (result1.getString("student1") == null || result1.getString("student1").isEmpty())) {
+				// Update student1 if it's empty
+				PreparedStatement updateStudent1Stmt = this.connection.prepareStatement(updateStudent1Query);
+				updateStudent1Stmt.setString(1, username);
+				updateStudent1Stmt.setString(2, groupName);
+				updateStudent1Stmt.executeUpdate();
+				System.out.println("Invite accepted: " + username + " added as student1 in group '" + groupName + "'");
+				res = true;
+			} else {
+				// Check and update student2 if student1 is already filled
+				PreparedStatement checkStudent2Stmt = this.connection.prepareStatement(checkStudent2Query);
+				checkStudent2Stmt.setString(1, groupName);
+				ResultSet result2 = checkStudent2Stmt.executeQuery();
 
-	            if (result2.next() && (result2.getString("student2") == null || result2.getString("student2").isEmpty())) {
-	                PreparedStatement updateStudent2Stmt = this.connection.prepareStatement(updateStudent2Query);
-	                updateStudent2Stmt.setString(1, username);
-	                updateStudent2Stmt.setString(2, groupName);
-	                updateStudent2Stmt.executeUpdate();
-	                System.out.println("Invite accepted: " + username + " added as student2 in group '" + groupName + "'");
-	                res = true;
-	            } else {
-	                System.out.println("Error: Both student slots are full in group '" + groupName + "'");
-	                
-	            }
-	        }
+				if (result2.next()
+						&& (result2.getString("student2") == null || result2.getString("student2").isEmpty())) {
+					PreparedStatement updateStudent2Stmt = this.connection.prepareStatement(updateStudent2Query);
+					updateStudent2Stmt.setString(1, username);
+					updateStudent2Stmt.setString(2, groupName);
+					updateStudent2Stmt.executeUpdate();
+					System.out.println(
+							"Invite accepted: " + username + " added as student2 in group '" + groupName + "'");
+					res = true;
+				} else {
+					System.out.println("Error: Both student slots are full in group '" + groupName + "'");
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    } finally {
-	        this.closeConnection();
-	    }
-	    return res;
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+		return res;
 	}
-	
+
 	@Override
 	public boolean declineInvite(String groupName, String username) {
 		this.establishConnection();
@@ -745,11 +747,11 @@ public class DBHandler extends PersistanceHandler {
 		boolean res = false;
 
 		// SQL query to delete the invite
-	    String deleteInviteQuery = """
-		        DELETE FROM Gr_Inv
-		        WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
-		          AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
-		    """;
+		String deleteInviteQuery = """
+				    DELETE FROM Gr_Inv
+				    WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
+				      AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
+				""";
 
 		try {
 			// Delete the invite
@@ -768,118 +770,121 @@ public class DBHandler extends PersistanceHandler {
 		return res;
 	}
 
-	
 	@Override
 	public boolean sendRequest(String groupName, String username) {
-	    this.establishConnection();
-	    System.out.println("Sending request for group '" + groupName + "' by user '" + username + "'");
-	    boolean res = false;
+		this.establishConnection();
+		System.out.println("Sending request for group '" + groupName + "' by user '" + username + "'");
+		boolean res = false;
 
-	    // SQL query to insert the request
-	    String insertRequestQuery = """
-	                INSERT INTO Gr_Req (GroupID, Stud_ID, Status)
-	                VALUES ((SELECT ID FROM groupT WHERE name = ?), (SELECT ID FROM User WHERE username = ?), 'pending')
-	            """;
+		// SQL query to insert the request
+		String insertRequestQuery = """
+				    INSERT INTO Gr_Req (GroupID, Stud_ID, Status)
+				    VALUES ((SELECT ID FROM groupT WHERE name = ?), (SELECT ID FROM User WHERE username = ?), 'pending')
+				""";
 
-	    try {
-	        // Insert the request
-	        PreparedStatement insertRequestStmt = this.connection.prepareStatement(insertRequestQuery);
-	        insertRequestStmt.setString(1, groupName);
-	        insertRequestStmt.setString(2, username);
+		try {
+			// Insert the request
+			PreparedStatement insertRequestStmt = this.connection.prepareStatement(insertRequestQuery);
+			insertRequestStmt.setString(1, groupName);
+			insertRequestStmt.setString(2, username);
 
-	        int rowsAffected = insertRequestStmt.executeUpdate();
-	        if (rowsAffected > 0) {
-	            System.out.println("Request sent: " + username + " requested to join group '" + groupName + "'");
-	            res = true;
-	        } else {
-	            System.out.println("Request could not be sent: Either the group or user does not exist.");
-	        }
+			int rowsAffected = insertRequestStmt.executeUpdate();
+			if (rowsAffected > 0) {
+				System.out.println("Request sent: " + username + " requested to join group '" + groupName + "'");
+				res = true;
+			} else {
+				System.out.println("Request could not be sent: Either the group or user does not exist.");
+			}
 
-	    } catch (SQLException e) {
-	        // Specific handling for common SQL exceptions
-	        if (e.getSQLState().startsWith("23")) { // SQL state for constraint violations
-	            System.out.println("Request failed: User might have already sent a request to this group.");
-	        } else {
-	            e.printStackTrace();
-	        }
-	    } finally {
-	        this.closeConnection();
-	    }
-	    return res;
+		} catch (SQLException e) {
+			// Specific handling for common SQL exceptions
+			if (e.getSQLState().startsWith("23")) { // SQL state for constraint violations
+				System.out.println("Request failed: User might have already sent a request to this group.");
+			} else {
+				e.printStackTrace();
+			}
+		} finally {
+			this.closeConnection();
+		}
+		return res;
 	}
-	
+
 	@Override
 	public boolean acceptRequest(String groupName, String username) {
-	    this.establishConnection();
-	    System.out.println("Accepting request for group '" + groupName + "' by user '" + username + "'");
-	    boolean res = false;
+		this.establishConnection();
+		System.out.println("Accepting request for group '" + groupName + "' by user '" + username + "'");
+		boolean res = false;
 
-	    // SQL query to delete the request
-	    String deleteRequestQuery = """
-	                DELETE FROM Gr_Req
-	                WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
-	                  AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
-	            """;
+		// SQL query to delete the request
+		String deleteRequestQuery = """
+				    DELETE FROM Gr_Req
+				    WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
+				      AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
+				""";
 
-	    // SQL queries to check and update group slots
-	    String checkStudent1Query = "SELECT student1 FROM groupT WHERE name = ?";
-	    String checkStudent2Query = "SELECT student2 FROM groupT WHERE name = ?";
-	    String updateStudent1Query = "UPDATE groupT SET student1 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
-	    String updateStudent2Query = "UPDATE groupT SET student2 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
+		// SQL queries to check and update group slots
+		String checkStudent1Query = "SELECT student1 FROM groupT WHERE name = ?";
+		String checkStudent2Query = "SELECT student2 FROM groupT WHERE name = ?";
+		String updateStudent1Query = "UPDATE groupT SET student1 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
+		String updateStudent2Query = "UPDATE groupT SET student2 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
 
-	    try {
-	        // Step 1: Delete the request
-	        PreparedStatement deleteRequestStmt = this.connection.prepareStatement(deleteRequestQuery);
-	        deleteRequestStmt.setString(1, groupName);
-	        deleteRequestStmt.setString(2, username);
-	        int rowsDeleted = deleteRequestStmt.executeUpdate();
+		try {
+			// Step 1: Delete the request
+			PreparedStatement deleteRequestStmt = this.connection.prepareStatement(deleteRequestQuery);
+			deleteRequestStmt.setString(1, groupName);
+			deleteRequestStmt.setString(2, username);
+			int rowsDeleted = deleteRequestStmt.executeUpdate();
 
-	        if (rowsDeleted > 0) {
-	            System.out.println("Request deleted successfully for user '" + username + "' in group '" + groupName + "'");
-	        } else {
-	            System.out.println("Error: No matching request found for user '" + username + "' in group '" + groupName + "'");
-	            this.closeConnection();
-	            return res; // Exit if no matching request found
-	        }
+			if (rowsDeleted > 0) {
+				System.out.println(
+						"Request deleted successfully for user '" + username + "' in group '" + groupName + "'");
+			} else {
+				System.out.println(
+						"Error: No matching request found for user '" + username + "' in group '" + groupName + "'");
+				this.closeConnection();
+				return res; // Exit if no matching request found
+			}
 
-	        // Step 2: Check and update the appropriate slot
-	        PreparedStatement checkStudent1Stmt = this.connection.prepareStatement(checkStudent1Query);
-	        checkStudent1Stmt.setString(1, groupName);
-	        ResultSet result1 = checkStudent1Stmt.executeQuery();
+			// Step 2: Check and update the appropriate slot
+			PreparedStatement checkStudent1Stmt = this.connection.prepareStatement(checkStudent1Query);
+			checkStudent1Stmt.setString(1, groupName);
+			ResultSet result1 = checkStudent1Stmt.executeQuery();
 
-	        if (result1.next() && (result1.getString("student1") == null || result1.getString("student1").isEmpty())) {
-	            // Update student1 if it's empty
-	            PreparedStatement updateStudent1Stmt = this.connection.prepareStatement(updateStudent1Query);
-	            updateStudent1Stmt.setString(1, username);
-	            updateStudent1Stmt.setString(2, groupName);
-	            updateStudent1Stmt.executeUpdate();
-	            System.out.println("Request accepted: " + username + " added as student1 in group '" + groupName + "'");
-	            res = true;
-	        } else {
-	            // Check and update student2 if student1 is already filled
-	            PreparedStatement checkStudent2Stmt = this.connection.prepareStatement(checkStudent2Query);
-	            checkStudent2Stmt.setString(1, groupName);
-	            ResultSet result2 = checkStudent2Stmt.executeQuery();
+			if (result1.next() && (result1.getString("student1") == null || result1.getString("student1").isEmpty())) {
+				// Update student1 if it's empty
+				PreparedStatement updateStudent1Stmt = this.connection.prepareStatement(updateStudent1Query);
+				updateStudent1Stmt.setString(1, username);
+				updateStudent1Stmt.setString(2, groupName);
+				updateStudent1Stmt.executeUpdate();
+				System.out.println("Request accepted: " + username + " added as student1 in group '" + groupName + "'");
+				res = true;
+			} else {
+				// Check and update student2 if student1 is already filled
+				PreparedStatement checkStudent2Stmt = this.connection.prepareStatement(checkStudent2Query);
+				checkStudent2Stmt.setString(1, groupName);
+				ResultSet result2 = checkStudent2Stmt.executeQuery();
 
-	            if (result2.next() && (result2.getString("student2") == null || result2.getString("student2").isEmpty())) {
-	                PreparedStatement updateStudent2Stmt = this.connection.prepareStatement(updateStudent2Query);
-	                updateStudent2Stmt.setString(1, username);
-	                updateStudent2Stmt.setString(2, groupName);
-	                updateStudent2Stmt.executeUpdate();
-	                System.out.println("Request accepted: " + username + " added as student2 in group '" + groupName + "'");
-	                res = true;
-	            } else {
-	                System.out.println("Error: Both student slots are full in group '" + groupName + "'");
-	            }
-	        }
+				if (result2.next()
+						&& (result2.getString("student2") == null || result2.getString("student2").isEmpty())) {
+					PreparedStatement updateStudent2Stmt = this.connection.prepareStatement(updateStudent2Query);
+					updateStudent2Stmt.setString(1, username);
+					updateStudent2Stmt.setString(2, groupName);
+					updateStudent2Stmt.executeUpdate();
+					System.out.println(
+							"Request accepted: " + username + " added as student2 in group '" + groupName + "'");
+					res = true;
+				} else {
+					System.out.println("Error: Both student slots are full in group '" + groupName + "'");
+				}
+			}
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    } finally {
-	        this.closeConnection();
-	    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
 
-	    return res;
+		return res;
 	}
 
 	@Override
@@ -912,97 +917,180 @@ public class DBHandler extends PersistanceHandler {
 		}
 		return res;
 	}
+
 //=======
+	@Override
 	public ArrayList<Resource> getAllResources() {
-		if(this.establishConnection() == false)
+		if (this.establishConnection() == false)
 			return null;
-		
+
 		ArrayList<Resource> resourceArrayList = null;
-		
+
 		try {
-			String sqlQuery1 = "SELECT *\r\n"
-					+ "FROM Resource;";
+			String sqlQuery1 = "SELECT *\r\n" + "FROM Resource;";
 			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
-			ResultSet result1 = statement1.executeQuery();			
-			
+			ResultSet result1 = statement1.executeQuery();
+
 			// if there is at least one result from the query
-			if(result1.next()) {
+			if (result1.next()) {
 				resourceArrayList = new ArrayList<Resource>();
-				Resource resource = new Resource(
-						result1.getInt("ID"),
-						result1.getString("title"),
-						result1.getString("description"),
-						result1.getString("uploader_username"),
-						result1.getString("filePath") );
+				Resource resource = new Resource(result1.getInt("ID"), result1.getString("title"),
+						result1.getString("description"), result1.getString("uploader_username"),
+						result1.getString("filePath"));
 				resourceArrayList.add(resource);
-				
+
 				// for the rest of the records
-				while(result1.next()) {
-					resource = new Resource(
-							result1.getInt("ID"),
-							result1.getString("title"),
-							result1.getString("description"),
-							result1.getString("uploader_username"),
-							result1.getString("filePath") );
+				while (result1.next()) {
+					resource = new Resource(result1.getInt("ID"), result1.getString("title"),
+							result1.getString("description"), result1.getString("uploader_username"),
+							result1.getString("filePath"));
 					resourceArrayList.add(resource);
 				}
 			}
-			
+
 		} catch (SQLException e) {
 			System.out.println("Exception thrown in the getAllResources() method of the DBHandler Class");
 			e.printStackTrace();
 		}
-		
+
 		this.closeConnection();
 		return resourceArrayList;
 	}
-	
-	public ArrayList<Resource> getResourcesByTitle(String title) {
-		if(this.establishConnection() == false)
+
+	@Override
+	public ArrayList<Deliverable> getAllDeliverables() {
+		if (this.establishConnection() == false)
 			return null;
-		
-		ArrayList<Resource> resourceArrayList = null;
-		
+
+		ArrayList<Deliverable> deliverableList = null;
+
 		try {
-			String sqlQuery1 = "SELECT *\r\n"
-					+ "FROM Resource\r\n"
-					+ "WHERE title like ?;";
+			String sqlQuery = """
+					    SELECT *
+					    FROM Deliverable;
+					""";
+			PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
+			ResultSet resultSet = statement.executeQuery();
+
+			// get faculty username from faculty ID
+			String facultyUsernameQuery = "SELECT username FROM User WHERE ID = ?";
+			PreparedStatement facultyUsernameStatement = this.connection.prepareStatement(facultyUsernameQuery);
+
+			// If there is at least one result from the query
+			if (resultSet.next()) {
+				deliverableList = new ArrayList<>();
+
+				facultyUsernameStatement.setInt(1, resultSet.getInt("facultyID"));
+				ResultSet facultyUsernameResultSet = facultyUsernameStatement.executeQuery();
+				facultyUsernameResultSet.next();
+				String facultyUsername = facultyUsernameResultSet.getString("username");
+
+				// Map the first result
+				Deliverable deliverable = new Deliverable(resultSet.getInt("ID"),
+						resultSet.getTimestamp("Deadline").toLocalDateTime(), resultSet.getString("description"),
+						resultSet.getString("doc_link"), facultyUsername);
+				deliverableList.add(deliverable);
+
+				// For the rest of the records
+				while (resultSet.next()) {
+
+					facultyUsernameStatement.setInt(1, resultSet.getInt("facultyID"));
+					ResultSet facultyUsernameResultSet1 = facultyUsernameStatement.executeQuery();
+					facultyUsernameResultSet1.next();
+					facultyUsername = facultyUsernameResultSet1.getString("username");
+
+					deliverable = new Deliverable(resultSet.getInt("ID"),
+							resultSet.getTimestamp("Deadline").toLocalDateTime(), resultSet.getString("description"),
+							resultSet.getString("doc_link"), facultyUsername);
+					deliverableList.add(deliverable);
+				}
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getAllDeliverables() method of the DBHandler Class");
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return deliverableList;
+	}
+
+	@Override
+	public ArrayList<Resource> getResourcesByTitle(String title) {
+		if (this.establishConnection() == false)
+			return null;
+
+		ArrayList<Resource> resourceArrayList = null;
+
+		try {
+			String sqlQuery1 = "SELECT *\r\n" + "FROM Resource\r\n" + "WHERE title like ?;";
 			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
 			statement1.setString(1, "%" + title + "%");
-			ResultSet result1 = statement1.executeQuery();			
-			
+			ResultSet result1 = statement1.executeQuery();
+
 			// if there is at least one result from the query
-			if(result1.next()) {
+			if (result1.next()) {
 				resourceArrayList = new ArrayList<Resource>();
-				Resource resource = new Resource(
-						result1.getInt("ID"),
-						result1.getString("title"),
-						result1.getString("description"),
-						result1.getString("uploader_username"),
-						result1.getString("filePath") );
+				Resource resource = new Resource(result1.getInt("ID"), result1.getString("title"),
+						result1.getString("description"), result1.getString("uploader_username"),
+						result1.getString("filePath"));
 				resourceArrayList.add(resource);
-				
+
 				// for the rest of the records
-				while(result1.next()) {
-					resource = new Resource(
-							result1.getInt("ID"),
-							result1.getString("title"),
-							result1.getString("description"),
-							result1.getString("uploader_username"),
-							result1.getString("filePath") );
+				while (result1.next()) {
+					resource = new Resource(result1.getInt("ID"), result1.getString("title"),
+							result1.getString("description"), result1.getString("uploader_username"),
+							result1.getString("filePath"));
 					resourceArrayList.add(resource);
 				}
 			}
-			
+
 		} catch (SQLException e) {
 			System.out.println("Exception thrown in the getAllResources(String) method of the DBHandler Class");
 			e.printStackTrace();
 		}
-		
+
 		this.closeConnection();
-		return resourceArrayList;		
+		return resourceArrayList;
 	}
-	
+
+	@Override
+	public boolean saveSubmission(int deliverableId, String groupId, Date submissionTime, String filePath) {
+
+		this.establishConnection();
+		int groupIdreal = 0;
+		// SQL query to get the group ID
+		String getGroupIdQuery = "SELECT ID FROM groupT WHERE name = ?";
+		try {
+			PreparedStatement getGroupIdStmt = this.connection.prepareStatement(getGroupIdQuery);
+			getGroupIdStmt.setString(1, groupId);
+			ResultSet groupIdResult = getGroupIdStmt.executeQuery();
+			if (groupIdResult.next()) {
+				groupIdreal = groupIdResult.getInt("ID");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		String sqlQuery = "INSERT INTO Submission (Del_ID, submission_time, groupID, content_link) VALUES (?, ?, ?, ?)";
+
+		try (PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery)) {
+			preparedStatement.setInt(1, deliverableId);
+			preparedStatement.setTimestamp(2, new java.sql.Timestamp(submissionTime.getTime()));
+			preparedStatement.setInt(3, groupIdreal);
+			preparedStatement.setString(4, filePath);
+
+			int rowsAffected = preparedStatement.executeUpdate();
+			this.closeConnection();
+			return rowsAffected > 0; // Return true if the insertion was successful
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Error occurred while saving submission to database.");
+			this.closeConnection();
+			return false;
+		}
+
+	}
+
 //>>>>>>> Stashed changes
 }
-

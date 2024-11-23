@@ -43,6 +43,9 @@ public class studentDashboardScreenController {
 	@FXML
 	public TextArea student_username;
 
+	@FXML
+	public Button SubmitButton;
+	
 	public studentDashboardScreenController() {
 
 	}
@@ -64,6 +67,15 @@ public class studentDashboardScreenController {
 		} else {
 			CreateGroupButton.setText("Create Group");
 		}
+		if (dbHandler.getGroupName(user.getUsername()) == "No Group Selected"
+				&& !dbHandler.isGroupLeader(user.getUsername())) {
+			SubmitButton.setDisable(true);
+			
+		}
+		else {
+			SubmitButton.setDisable(false);
+		}
+		
 		HomeButton.fire();
 		loadPage("studentHome");
 	}
@@ -108,6 +120,15 @@ public class studentDashboardScreenController {
 		} else {
 			CreateGroupButton.setText("Create Group");
 		}
+		if (dbHandler.getGroupName(user.getUsername()) == "No Group Selected"
+				&& !dbHandler.isGroupLeader(user.getUsername())) {
+			SubmitButton.setDisable(true);
+			
+		}
+		else {
+			SubmitButton.setDisable(false);
+		}
+		
 		loadPage("studentHome");
 
 	}
@@ -157,6 +178,11 @@ public class studentDashboardScreenController {
 	@FXML
 	public void displayResources(MouseEvent me) {
 		this.loadPage("downloadResourcesScreen");
+	}
+	
+	@FXML
+	public void submitDeliverables(MouseEvent me) {
+		this.loadPage("submitDeliverables");
 	}
 	
 	private void loadPage(String resource) {

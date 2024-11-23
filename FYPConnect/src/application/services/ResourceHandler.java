@@ -30,6 +30,8 @@ public class ResourceHandler {
 		return resourceArrayList;
 	}
 	
+
+	
 	public ArrayList<Resource> getResourcesByTitle(String title) {
 		ArrayList<Resource> resourceArrayList = this.dbHandler.getResourcesByTitle(title);
 		
