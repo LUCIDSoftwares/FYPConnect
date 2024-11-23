@@ -1,6 +1,8 @@
 package application;
 	
+//import application.services.Resource;
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
@@ -22,6 +24,12 @@ public class Main extends Application {
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
+				
+//			Task<Void> task = new Resource();
+//			Thread thread = new Thread(task);
+//			thread.setDaemon(true);
+//			thread.start();
+			
 			
 		} catch(Exception e) {
 			e.printStackTrace();
