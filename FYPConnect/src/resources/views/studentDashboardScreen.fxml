@@ -13,7 +13,7 @@
          <children>
             <Button fx:id="HomeButton" mnemonicParsing="false" onMouseClicked="#home" prefHeight="85.0" prefWidth="101.0" text="Home" />
             <Button fx:id="CreateGroupButton" mnemonicParsing="false" onMouseClicked="#createGroups" prefHeight="85.0" prefWidth="101.0" text="Create Group" />
-            <Button fx:id="JoinGroupButton" mnemonicParsing="false" prefHeight="85.0" prefWidth="101.0" text="Join Groups" />
+            <Button fx:id="JoinGroupButton" mnemonicParsing="false" onMouseClicked="#joinGroups" prefHeight="85.0" prefWidth="101.0" text="Join Groups" />
             <Button fx:id="ProjectsButton" mnemonicParsing="false" prefHeight="85.0" prefWidth="101.0" text="Projects" />
             <Button fx:id="SubmitButton" mnemonicParsing="false" prefHeight="85.0" prefWidth="101.0" text="Submit" />
             <Button fx:id="ViewFeedbackButton" mnemonicParsing="false" prefHeight="85.0" prefWidth="101.0" text="View Feedback" />

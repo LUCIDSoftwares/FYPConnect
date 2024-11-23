@@ -490,5 +490,164 @@ public class DBHandler extends PersistanceHandler {
 	    this.closeConnection();
 	}
 
+	@Override
+	public boolean isGroupLeader(String Username) {
+		this.establishConnection();
+		boolean isLeader = false;
+
+		String sqlQuery1 = """
+				    SELECT *
+				    FROM groupT
+				    JOIN User ON groupT.leader = User.ID
+				    WHERE User.username = ?;
+				""";
+
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, Username);
+			ResultSet result1 = preparedStatement1.executeQuery();
+
+			if (result1.next()) {
+				isLeader = true;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return isLeader;
+	}
+	
+	@Override
+	public String[] getGroupRequests(String username) {
+	    this.establishConnection();
+	    String[] requestSenders = new String[10]; // Adjust the array size as needed
+
+	    String sqlQuery = """
+	                SELECT User.username
+	                FROM Gr_Req
+	                JOIN groupT ON Gr_Req.GroupID = groupT.ID
+	                JOIN User ON Gr_Req.Stud_ID = User.ID
+	                WHERE groupT.leader = (
+	                    SELECT ID 
+	                    FROM User 
+	                    WHERE username = ?
+	                );
+	            """;
+
+	    try {
+	        PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery);
+	        preparedStatement.setString(1, username);
+	        ResultSet resultSet = preparedStatement.executeQuery();
+
+	        int i = 0;
+	        while (resultSet.next()) {
+	            requestSenders[i] = resultSet.getString("username");
+	            i++;
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        this.closeConnection();
+	    }
+
+	    return requestSenders;
+	}
+
+	
+	
+	@Override
+	public String[] getGroupInvitations(String Username) {
+		this.establishConnection();
+		String[] invitations = new String[10];
+
+		String sqlQuery1 = """
+				    SELECT groupT.name
+				    FROM Gr_Inv
+				    JOIN groupT ON Gr_Inv.GroupID = groupT.ID
+				    JOIN User ON Gr_Inv.Stud_ID = User.ID
+				    WHERE User.username = ?;
+				""";
+
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, Username);
+			ResultSet result1 = preparedStatement1.executeQuery();
+
+			int i = 0;
+			while (result1.next()) {
+				invitations[i] = result1.getString("name");
+				i++;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return invitations;
+	}
+	
+	@Override
+	public String[] getAvailableGroups() {
+		this.establishConnection();
+		String[] availableGroups = new String[10];
+
+		String sqlQuery1 = """
+				    SELECT name
+				    FROM groupT
+				    WHERE student1 IS NULL OR student2 IS NULL;
+				""";
+
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			ResultSet result1 = preparedStatement1.executeQuery();
+
+			int i = 0;
+			while (result1.next()) {
+				availableGroups[i] = result1.getString("name");
+				i++;
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return availableGroups;
+	}
+	
+	@Override
+	public String getGroupLeader(String groupName) {
+	    String leaderUsername = null;
+
+	    String sqlQuery = """
+	        SELECT User.username
+	        FROM groupT
+	        JOIN User ON groupT.leader = User.ID
+	        WHERE groupT.name = ?;
+	    """;
+
+	    try {
+	        this.establishConnection();
+	        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery)) {
+	            preparedStatement.setString(1, groupName);
+	            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	                if (resultSet.next()) {
+	                    leaderUsername = resultSet.getString("username"); // Fetch only the username
+	                }
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        this.closeConnection();
+	    }
+
+	    return leaderUsername;
+	}
+
 	
 }

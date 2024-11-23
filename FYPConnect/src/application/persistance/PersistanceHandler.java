@@ -31,4 +31,14 @@ public abstract class PersistanceHandler {
 	public abstract boolean checkGroupExists(String GroupName);
 	
 	public abstract void deleteGroup(String GroupName);
+	
+	public abstract boolean isGroupLeader(String Username);
+	
+	public abstract String[] getGroupRequests(String Username);
+	
+	public abstract String[] getGroupInvitations(String Username);
+	
+	public abstract String[] getAvailableGroups();
+	
+	public abstract String getGroupLeader(String GroupName);
 }

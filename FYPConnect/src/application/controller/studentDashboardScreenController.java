@@ -26,6 +26,10 @@ public class studentDashboardScreenController {
 
 	@FXML
 	public Button CreateGroupButton;
+
+	@FXML
+	public Button JoinGroupButton;
+
 	@FXML
 	public AnchorPane ap;
 
@@ -50,7 +54,8 @@ public class studentDashboardScreenController {
 		} else {
 			System.out.println("No user found in session");
 		}
-		if (dbHandler.getGroupName(user.getUsername()) != "No Group Selected") {
+		if (dbHandler.getGroupName(user.getUsername()) != "No Group Selected"
+				&& dbHandler.isGroupLeader(user.getUsername())) {
 			CreateGroupButton.setText("Delete Group");
 		} else {
 			CreateGroupButton.setText("Create Group");
@@ -79,7 +84,8 @@ public class studentDashboardScreenController {
 	@FXML
 	public void home(MouseEvent me) {
 		System.out.println("Home Button Clicked");
-		if (dbHandler.getGroupName(user.getUsername()) != "No Group Selected") {
+		if (dbHandler.getGroupName(user.getUsername()) != "No Group Selected"
+				&& dbHandler.isGroupLeader(user.getUsername())) {
 			CreateGroupButton.setText("Delete Group");
 		} else {
 			CreateGroupButton.setText("Create Group");
@@ -93,7 +99,8 @@ public class studentDashboardScreenController {
 		System.out.println("Create Groups Button Clicked");
 		// if user is already in a group, then they cannot create a group, instead will
 		// load delete group page
-		if (dbHandler.getGroupName(user.getUsername()) != "No Group Selected") {
+		if (dbHandler.getGroupName(user.getUsername()) != "No Group Selected"
+				&& dbHandler.isGroupLeader(user.getUsername())) {
 			CreateGroupButton.setText("Delete Group");
 			loadPage("deleteGroups");
 		} else {
@@ -102,6 +109,33 @@ public class studentDashboardScreenController {
 		}
 
 	}
+
+	@FXML
+	public void joinGroups(MouseEvent me) {
+	    System.out.println("Join Groups Button Clicked");
+
+	    // Check if the user is already in a group
+	    String groupName = dbHandler.getGroupName(user.getUsername());
+	    boolean isLeader = dbHandler.isGroupLeader(user.getUsername());
+	    String[] groupMembers = dbHandler.getGroupMembers(user.getUsername());
+
+	    // Case 1: User is not already in a group but not a leader
+	    if (groupName.equals("No Group Selected") && !isLeader) {
+	        loadPage("joinGroups");
+	        return;
+	    }
+
+	    // Case 2: User is a leader and the group is not full
+	    if (isLeader && groupMembers[0].equals("No Leader Found")) {
+	        loadPage("joinGroups");
+	        return;
+	    }
+
+	    // Default case: Disable the button if neither condition is met
+	    JoinGroupButton.setDisable(true);
+	    JoinGroupButton.setText("-Join Groups-");
+	}
+
 
 	private void loadPage(String resource) {
 		try {
