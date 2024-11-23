@@ -11,6 +11,8 @@ public abstract class PersistanceHandler {
 	
 	public abstract User retrieveUser(String username, String password);
 	
+	public abstract User retrieveUser(String username);
+	
 	public abstract int getNumOfUsers();
 	
 	public abstract int getNumOfGroups();

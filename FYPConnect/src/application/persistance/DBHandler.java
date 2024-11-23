@@ -93,6 +93,31 @@ public class DBHandler extends PersistanceHandler {
 		this.closeConnection();
 		return user;
 	}
+	
+	@Override
+	public User retrieveUser(String username) {
+		this.establishConnection();
+		User user = null;
+
+		String sqlQuery1 = "SELECT * \r\n" + "FROM User \r\n" + "WHERE username = ?;";
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, username);
+			ResultSet result1 = preparedStatement1.executeQuery();
+			if (result1.next()) {
+				UserFactory concreteUserFactory = ConcreteUserFactory.getInstance();
+				user = concreteUserFactory.createUser(result1);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the retrieveUser(String, String) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return user;
+	}
+
 
 	@Override
 	public int getNumOfUsers() {
