@@ -145,7 +145,22 @@ public class joinGroupsController {
 	
 	@FXML
 	public void declineInvite() {
+		if (invitatonsCombo.getValue() == null || invitatonsCombo.getValue().isEmpty()) {
+			invite_text_1.setText("Error");
+			invite_text_2.setText("No group selected. Please select a group.");
+			return;
+		}
 
+		// if the user is a leader, decline the request
+		if (isLeader) {
+			dbHandler.declineInvite(invitatonsCombo.getValue(), user.getUsername());
+			invite_text_1.setText("Request Declined");
+		} else {
+			// if the user is not a leader, decline the invitation
+			dbHandler.declineInvite(invitatonsCombo.getValue(), user.getUsername());
+			invite_text_1.setText("Invitation Declined");
+			invite_text_2.setText("");
+		}
 	}
 	
 	@FXML

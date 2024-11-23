@@ -710,5 +710,35 @@ public class DBHandler extends PersistanceHandler {
 	    }
 	    return res;
 	}
+	
+	@Override
+	public boolean declineInvite(String groupName, String username) {
+		this.establishConnection();
+		System.out.println("Declining invite for group '" + groupName + "' by user '" + username + "'");
+		boolean res = false;
+
+		// SQL query to delete the invite
+	    String deleteInviteQuery = """
+		        DELETE FROM Gr_Inv
+		        WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
+		          AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
+		    """;
+
+		try {
+			// Delete the invite
+			PreparedStatement deleteInviteStmt = this.connection.prepareStatement(deleteInviteQuery);
+			deleteInviteStmt.setString(1, groupName);
+			deleteInviteStmt.setString(2, username);
+			deleteInviteStmt.executeUpdate();
+			System.out.println("Invite declined: " + username + " removed from group '" + groupName + "'");
+			res = true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+		return res;
+	}
 
 }

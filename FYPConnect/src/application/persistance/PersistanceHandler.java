@@ -43,4 +43,6 @@ public abstract class PersistanceHandler {
 	public abstract String getGroupLeader(String GroupName);
 	
 	public abstract boolean acceptInvite(String GroupName, String Username);
+	
+	public abstract boolean declineInvite(String GroupName, String Username);
 }
