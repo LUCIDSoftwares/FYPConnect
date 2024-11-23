@@ -45,4 +45,10 @@ public abstract class PersistanceHandler {
 	public abstract boolean acceptInvite(String GroupName, String Username);
 	
 	public abstract boolean declineInvite(String GroupName, String Username);
+	
+	public abstract boolean sendRequest(String GroupName, String Username);
+	
+	public abstract boolean acceptRequest(String GroupName, String Username);
+	
+	public abstract boolean declineRequest(String GroupName, String Username);
 }

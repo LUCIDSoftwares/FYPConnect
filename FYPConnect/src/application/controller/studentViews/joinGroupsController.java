@@ -128,8 +128,22 @@ public class joinGroupsController {
 		
 		// if the user is a leader, accept the request
 		if (isLeader) {
-			dbHandler.acceptInvite(invitatonsCombo.getValue(), user.getUsername());
-			invite_text_1.setText("Request Accepted");
+			String selectedperson = invitatonsCombo.getValue(); // Fetch selected group from ComboBox
+			if (selectedperson != null && !selectedperson.isEmpty()) {
+			    boolean isAccepted = dbHandler.acceptRequest(dbHandler.getGroupName(user.getUsername()), selectedperson); // Use the corrected method
+
+			    if (isAccepted) {
+			        invite_text_1.setText("Request Accepted");
+			        invite_text_2.setText("You are now a member of the group: " + selectedperson);
+			    } else {
+			        invite_text_1.setText("Request Not Accepted");
+			        invite_text_2.setText("Unable to join the group. Please try again or contact support.");
+			    }
+			} else {
+			    invite_text_1.setText("No Group Selected");
+			    invite_text_2.setText("Please select a group from the dropdown.");
+			}
+
 		} else {
 			// if the user is not a leader, accept the invitation
 			boolean result = dbHandler.acceptInvite(invitatonsCombo.getValue(), user.getUsername());
@@ -153,8 +167,15 @@ public class joinGroupsController {
 
 		// if the user is a leader, decline the request
 		if (isLeader) {
-			dbHandler.declineInvite(invitatonsCombo.getValue(), user.getUsername());
-			invite_text_1.setText("Request Declined");
+			boolean isDeclined = dbHandler.declineRequest(dbHandler.getGroupName(user.getUsername()),
+					invitatonsCombo.getValue());
+			if (isDeclined) {
+				invite_text_1.setText("Request Declined");
+				invite_text_2.setText("");
+			} else {
+				invite_text_1.setText("Error");
+				invite_text_2.setText("Unable to decline the request. Please try again.");
+			}
 		} else {
 			// if the user is not a leader, decline the invitation
 			dbHandler.declineInvite(invitatonsCombo.getValue(), user.getUsername());
@@ -165,7 +186,20 @@ public class joinGroupsController {
 	
 	@FXML
 	public void sendRequest() {
-
+		if (groups_Combo.getValue() == null || groups_Combo.getValue().isEmpty()) {
+			request_text_1.setText("Error");
+			request_text_2.setText("No group selected. Please select a group.");
+			return;
+		}
+		// send a request to join the group
+		boolean result = dbHandler.sendRequest(groups_Combo.getValue(), user.getUsername());
+		if (result) {
+			request_text_1.setText("Request Sent");
+			request_text_2.setText("Waiting for the group leader to accept your request");
+		} else {
+			request_text_1.setText("Error");
+			request_text_2.setText("Unable to send request. You may already be a member of the group.");
+		}
 	}
 	
 }

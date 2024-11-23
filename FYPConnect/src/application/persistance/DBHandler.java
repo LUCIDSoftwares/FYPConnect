@@ -741,4 +741,147 @@ public class DBHandler extends PersistanceHandler {
 		return res;
 	}
 
+	
+	@Override
+	public boolean sendRequest(String groupName, String username) {
+	    this.establishConnection();
+	    System.out.println("Sending request for group '" + groupName + "' by user '" + username + "'");
+	    boolean res = false;
+
+	    // SQL query to insert the request
+	    String insertRequestQuery = """
+	                INSERT INTO Gr_Req (GroupID, Stud_ID, Status)
+	                VALUES ((SELECT ID FROM groupT WHERE name = ?), (SELECT ID FROM User WHERE username = ?), 'pending')
+	            """;
+
+	    try {
+	        // Insert the request
+	        PreparedStatement insertRequestStmt = this.connection.prepareStatement(insertRequestQuery);
+	        insertRequestStmt.setString(1, groupName);
+	        insertRequestStmt.setString(2, username);
+
+	        int rowsAffected = insertRequestStmt.executeUpdate();
+	        if (rowsAffected > 0) {
+	            System.out.println("Request sent: " + username + " requested to join group '" + groupName + "'");
+	            res = true;
+	        } else {
+	            System.out.println("Request could not be sent: Either the group or user does not exist.");
+	        }
+
+	    } catch (SQLException e) {
+	        // Specific handling for common SQL exceptions
+	        if (e.getSQLState().startsWith("23")) { // SQL state for constraint violations
+	            System.out.println("Request failed: User might have already sent a request to this group.");
+	        } else {
+	            e.printStackTrace();
+	        }
+	    } finally {
+	        this.closeConnection();
+	    }
+	    return res;
+	}
+	
+	@Override
+	public boolean acceptRequest(String groupName, String username) {
+	    this.establishConnection();
+	    System.out.println("Accepting request for group '" + groupName + "' by user '" + username + "'");
+	    boolean res = false;
+
+	    // SQL query to delete the request
+	    String deleteRequestQuery = """
+	                DELETE FROM Gr_Req
+	                WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
+	                  AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
+	            """;
+
+	    // SQL queries to check and update group slots
+	    String checkStudent1Query = "SELECT student1 FROM groupT WHERE name = ?";
+	    String checkStudent2Query = "SELECT student2 FROM groupT WHERE name = ?";
+	    String updateStudent1Query = "UPDATE groupT SET student1 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
+	    String updateStudent2Query = "UPDATE groupT SET student2 = (SELECT ID FROM User WHERE username = ?) WHERE name = ?";
+
+	    try {
+	        // Step 1: Delete the request
+	        PreparedStatement deleteRequestStmt = this.connection.prepareStatement(deleteRequestQuery);
+	        deleteRequestStmt.setString(1, groupName);
+	        deleteRequestStmt.setString(2, username);
+	        int rowsDeleted = deleteRequestStmt.executeUpdate();
+
+	        if (rowsDeleted > 0) {
+	            System.out.println("Request deleted successfully for user '" + username + "' in group '" + groupName + "'");
+	        } else {
+	            System.out.println("Error: No matching request found for user '" + username + "' in group '" + groupName + "'");
+	            this.closeConnection();
+	            return res; // Exit if no matching request found
+	        }
+
+	        // Step 2: Check and update the appropriate slot
+	        PreparedStatement checkStudent1Stmt = this.connection.prepareStatement(checkStudent1Query);
+	        checkStudent1Stmt.setString(1, groupName);
+	        ResultSet result1 = checkStudent1Stmt.executeQuery();
+
+	        if (result1.next() && (result1.getString("student1") == null || result1.getString("student1").isEmpty())) {
+	            // Update student1 if it's empty
+	            PreparedStatement updateStudent1Stmt = this.connection.prepareStatement(updateStudent1Query);
+	            updateStudent1Stmt.setString(1, username);
+	            updateStudent1Stmt.setString(2, groupName);
+	            updateStudent1Stmt.executeUpdate();
+	            System.out.println("Request accepted: " + username + " added as student1 in group '" + groupName + "'");
+	            res = true;
+	        } else {
+	            // Check and update student2 if student1 is already filled
+	            PreparedStatement checkStudent2Stmt = this.connection.prepareStatement(checkStudent2Query);
+	            checkStudent2Stmt.setString(1, groupName);
+	            ResultSet result2 = checkStudent2Stmt.executeQuery();
+
+	            if (result2.next() && (result2.getString("student2") == null || result2.getString("student2").isEmpty())) {
+	                PreparedStatement updateStudent2Stmt = this.connection.prepareStatement(updateStudent2Query);
+	                updateStudent2Stmt.setString(1, username);
+	                updateStudent2Stmt.setString(2, groupName);
+	                updateStudent2Stmt.executeUpdate();
+	                System.out.println("Request accepted: " + username + " added as student2 in group '" + groupName + "'");
+	                res = true;
+	            } else {
+	                System.out.println("Error: Both student slots are full in group '" + groupName + "'");
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        this.closeConnection();
+	    }
+
+	    return res;
+	}
+
+	@Override
+	public boolean declineRequest(String groupName, String username) {
+		this.establishConnection();
+		System.out.println("Declining request for group '" + groupName + "' by user '" + username + "'");
+		boolean res = false;
+
+		// SQL query to delete the request
+		String deleteRequestQuery = """
+				    DELETE FROM Gr_Req
+				    WHERE GroupID = (SELECT ID FROM groupT WHERE name = ?)
+				      AND Stud_ID = (SELECT ID FROM User WHERE username = ?)
+				""";
+
+		try {
+			// Delete the request
+			PreparedStatement deleteRequestStmt = this.connection.prepareStatement(deleteRequestQuery);
+			deleteRequestStmt.setString(1, groupName);
+			deleteRequestStmt.setString(2, username);
+			deleteRequestStmt.executeUpdate();
+			System.out.println("Request declined: " + username + " removed from group '" + groupName + "'");
+			res = true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			this.closeConnection();
+		}
+		return res;
+	}
 }
