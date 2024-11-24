@@ -1015,6 +1015,149 @@ public class DBHandler extends PersistanceHandler {
 		return deliverableList;
 	}
 
+//	@Override
+//	public ArrayList<Deliverable> getAllSubmittedDeliverables(String group_name) {
+//		if (this.establishConnection() == false)
+//			return null;
+//
+//		ArrayList<Deliverable> deliverableList = null;
+//
+//		try {
+//			
+//			// SQL query to get the group ID
+//			String getGroupIdQuery = "SELECT ID FROM groupT WHERE name = ?";
+//			PreparedStatement getGroupIdStmt = this.connection.prepareStatement(getGroupIdQuery);
+//			getGroupIdStmt.setString(1, group_name);
+//			ResultSet groupIdResult = getGroupIdStmt.executeQuery();
+//			int groupId = 0;
+//			if (groupIdResult.next()) {
+//				groupId = groupIdResult.getInt("ID");
+//			}
+//			
+//			//query to get the deliverables submitted by the group
+//			String sqlQuery = """
+//					    SELECT Deliverable.ID, Deliverable.Deadline, Deliverable.description, Deliverable.doc_link, User.username
+//					    FROM Deliverable
+//					    JOIN Submission ON Deliverable.ID = Submission.Del_ID
+//					    JOIN groupT ON Submission.groupID = groupT.ID
+//					    JOIN User ON Deliverable.facultyID = User.ID
+//					    WHERE groupT.ID = ?;
+//					""";
+//			
+//			PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
+//			statement.setInt(1, groupId);
+//			ResultSet resultSet = statement.executeQuery();
+//
+//			// get faculty username from faculty ID
+//			String facultyUsernameQuery = "SELECT username FROM User WHERE ID = ?";
+//			PreparedStatement facultyUsernameStatement = this.connection.prepareStatement(facultyUsernameQuery);
+//
+//			// If there is at least one result from the query
+//			if (resultSet.next()) {
+//				deliverableList = new ArrayList<>();
+//
+//				facultyUsernameStatement.setInt(1, resultSet.getInt("facultyID"));
+//				ResultSet facultyUsernameResultSet = facultyUsernameStatement.executeQuery();
+//				facultyUsernameResultSet.next();
+//				String facultyUsername = facultyUsernameResultSet.getString("username");
+//
+//				// Map the first result
+//				Deliverable deliverable = new Deliverable(resultSet.getInt("ID"),
+//						resultSet.getTimestamp("Deadline").toLocalDateTime(), resultSet.getString("description"),
+//						resultSet.getString("doc_link"), facultyUsername);
+//				deliverableList.add(deliverable);
+//
+//				// For the rest of the records
+//				while (resultSet.next()) {
+//
+//					facultyUsernameStatement.setInt(1, resultSet.getInt("facultyID"));
+//					ResultSet facultyUsernameResultSet1 = facultyUsernameStatement.executeQuery();
+//					facultyUsernameResultSet1.next();
+//					facultyUsername = facultyUsernameResultSet1.getString("username");
+//
+//					deliverable = new Deliverable(resultSet.getInt("ID"),
+//							resultSet.getTimestamp("Deadline").toLocalDateTime(), resultSet.getString("description"),
+//							resultSet.getString("doc_link"), facultyUsername);
+//					deliverableList.add(deliverable);
+//				}
+//			}
+//
+//		} catch (SQLException e) {
+//			System.out.println("Exception thrown in the getAllDeliverables() method of the DBHandler Class");
+//			e.printStackTrace();
+//		}
+//
+//		this.closeConnection();
+//		return deliverableList;
+//	}
+	
+	
+	
+	@Override
+	public ArrayList<Deliverable> getAllSubmittedDeliverables(String group_name) {
+	    ArrayList<Deliverable> deliverableList = new ArrayList<>(); // Initialize as empty list
+
+	    if (!this.establishConnection()) {
+	        return null;
+	    }
+
+	    try {
+	        // Query to get the group ID
+	        String getGroupIdQuery = "SELECT ID FROM groupT WHERE name = ?";
+	        PreparedStatement getGroupIdStmt = this.connection.prepareStatement(getGroupIdQuery);
+	        getGroupIdStmt.setString(1, group_name);
+	        ResultSet groupIdResult = getGroupIdStmt.executeQuery();
+
+	        int groupId = 0;
+	        if (groupIdResult.next()) {
+	            groupId = groupIdResult.getInt("ID");
+	        } else {
+	            System.out.println("Group not found for name: " + group_name);
+	            return deliverableList; // Return empty list if group not found
+	        }
+
+	        // Query to get the deliverables along with faculty username
+	        String sqlQuery = """
+	            SELECT Deliverable.ID, Deliverable.Deadline, Deliverable.description, Deliverable.doc_link, 
+	                   User.username AS facultyUsername
+	            FROM Deliverable
+	            JOIN Submission ON Deliverable.ID = Submission.Del_ID
+	            JOIN groupT ON Submission.groupID = groupT.ID
+	            JOIN User ON Deliverable.facultyID = User.ID
+	            WHERE groupT.ID = ?;
+	        """;
+
+	        PreparedStatement statement = this.connection.prepareStatement(sqlQuery);
+	        statement.setInt(1, groupId);
+	        ResultSet resultSet = statement.executeQuery();
+
+	        // Loop through the results and map to Deliverable objects
+	        while (resultSet.next()) {
+	            Deliverable deliverable = new Deliverable(
+	                resultSet.getInt("ID"),
+	                resultSet.getTimestamp("Deadline").toLocalDateTime(),
+	                resultSet.getString("description"),
+	                resultSet.getString("doc_link"),
+	                resultSet.getString("facultyUsername") // Directly fetch username
+	            );
+	            deliverableList.add(deliverable);
+	        }
+
+	    } catch (SQLException e) {
+	        System.out.println("Exception occurred in getAllSubmittedDeliverables() method.");
+	        e.printStackTrace();
+	    } finally {
+	        // Ensure connection is closed in all cases
+	        this.closeConnection();
+	    }
+
+	    return deliverableList;
+	}
+
+	
+	
+	
+	
 	@Override
 	public ArrayList<Resource> getResourcesByTitle(String title) {
 		if (this.establishConnection() == false)
@@ -1091,6 +1234,155 @@ public class DBHandler extends PersistanceHandler {
 		}
 
 	}
+	
+	@Override
+	public String getFeedback(int deliverableId, String groupName) {
+	    this.establishConnection();
+	    String feedback = null;
 
+	    // SQL query to get the group ID
+	    String getGroupIdQuery = "SELECT ID FROM groupT WHERE name = ?";
+	    int groupId = 0;
+
+	    try (PreparedStatement getGroupIdStmt = this.connection.prepareStatement(getGroupIdQuery)) {
+	        getGroupIdStmt.setString(1, groupName);
+	        try (ResultSet groupIdResult = getGroupIdStmt.executeQuery()) {
+	            if (groupIdResult.next()) {
+	                groupId = groupIdResult.getInt("ID");
+	            } else {
+	                System.out.println("Group not found for name: " + groupName);
+	                return null; // Early exit if group does not exist
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return null; // Return null in case of failure
+	    }
+
+	    // SQL query to get feedback
+	    String sqlQuery = """
+	        SELECT f.Remarks AS feedback 
+	        FROM Feedback f
+	        INNER JOIN Submission s ON f.Submission_ID = s.ID
+	        WHERE s.Del_ID = ? AND s.groupID = ?""";
+
+	    try (PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery)) {
+	        preparedStatement.setInt(1, deliverableId);
+	        preparedStatement.setInt(2, groupId);
+	        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	            if (resultSet.next()) {
+	                feedback = resultSet.getString("feedback");
+	            } else {
+	                System.out.println("No feedback found for deliverable ID " + deliverableId + " and group ID " + groupId);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        this.closeConnection();
+	    }
+
+	    return feedback;
+	}
+
+	@Override
+	public String getGrade(int deliverableId, String group_name) {
+		this.establishConnection();
+        String grade = null;
+
+        // SQL query to get the group ID
+        String getGroupIdQuery = "SELECT ID FROM groupT WHERE name = ?";
+        int groupId = 0;
+
+        try {
+            PreparedStatement getGroupIdStmt = this.connection.prepareStatement(getGroupIdQuery);
+            getGroupIdStmt.setString(1, group_name);
+            ResultSet groupIdResult = getGroupIdStmt.executeQuery();
+            if (groupIdResult.next()) {
+                groupId = groupIdResult.getInt("ID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String sqlQuery = """
+                    SELECT grade
+                    FROM Feedback
+                    JOIN Submission ON Feedback.Submission_ID = Submission.ID
+                    WHERE Submission.Del_ID = ? AND Submission.groupID = ?;
+                """;
+
+        try {
+            PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery);
+            preparedStatement.setInt(1, deliverableId);
+            preparedStatement.setInt(2, groupId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                grade = resultSet.getString("grade");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        this.closeConnection();
+        return grade;
+    }
+	
+	
+	@Override
+	public String getGrader(int deliverableId, String groupName) {
+	    this.establishConnection();
+	    String grader = null;
+
+	    // SQL query to get the group ID
+	    String getGroupIdQuery = "SELECT ID FROM groupT WHERE name = ?";
+	    int groupId = 0;
+
+	    try (PreparedStatement getGroupIdStmt = this.connection.prepareStatement(getGroupIdQuery)) {
+	        getGroupIdStmt.setString(1, groupName);
+	        try (ResultSet groupIdResult = getGroupIdStmt.executeQuery()) {
+	            if (groupIdResult.next()) {
+	                groupId = groupIdResult.getInt("ID");
+	            } else {
+	                System.out.println("Group not found for name: " + groupName);
+	                return null; // Early exit if group does not exist
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return null; // Return null in case of failure
+	    }
+
+	    // SQL query to fetch the grader's username
+	    String sqlQuery = """
+	        SELECT u.username
+	        FROM User u
+	        JOIN Feedback f ON u.ID = f.Faculty_ID
+	        JOIN Submission s ON f.Submission_ID = s.ID
+	        WHERE s.Del_ID = ? AND s.groupID = ?""";
+
+	    try (PreparedStatement preparedStatement = this.connection.prepareStatement(sqlQuery)) {
+	        preparedStatement.setInt(1, deliverableId);
+	        preparedStatement.setInt(2, groupId);
+	        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	            if (resultSet.next()) {
+	                grader = resultSet.getString("username");
+	            } else {
+	                System.out.println("No grader found for deliverable ID " + deliverableId + " and group ID " + groupId);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        this.closeConnection();
+	    }
+
+	    return grader;
+	}
+
+	
 //>>>>>>> Stashed changes
+
 }

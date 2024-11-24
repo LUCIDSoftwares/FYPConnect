@@ -69,6 +69,7 @@ public class Main extends Application {
 			primaryStage.getIcons().add(icon);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
+			primaryStage.setResizable(false);
 			primaryStage.show();
 				
 //			Task<Void> task = new Resource();

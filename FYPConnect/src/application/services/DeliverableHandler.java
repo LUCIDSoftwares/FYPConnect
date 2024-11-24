@@ -24,6 +24,13 @@ public class DeliverableHandler {
         return deliverableArrayList;
     }
     
+    // Returns all deliverables from the database
+    public ArrayList<Deliverable> getAllSubmittedDeliverables(String group_name) {
+        ArrayList<Deliverable> deliverableArrayList = this.dbHandler.getAllSubmittedDeliverables(group_name);
+        return deliverableArrayList;
+    }
+    
+    
 	public String downloadResource(String fileTitle, String filePath) {
 		//String fileTitle = "My Thesis";
 		//String filePath = "C:/Users/HP/Downloads/22I-0789_AdmitCard-1.pdf/";

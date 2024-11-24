@@ -66,7 +66,15 @@ public abstract class PersistanceHandler {
 	
 	public abstract ArrayList<Deliverable> getAllDeliverables();
 	
+	public abstract ArrayList<Deliverable> getAllSubmittedDeliverables(String group_name);
+	
 	public abstract boolean saveSubmission(int deliverableId, String groupId, Date submissionTime, String filePath);
+	
+	public abstract String getFeedback(int deliverableId, String group_name);
+	
+	public abstract String getGrade(int deliverableId, String group_name);
+	
+	public abstract String getGrader(int deliverableId, String group_name);
 	
 //>>>>>>> Stashed changes
 }

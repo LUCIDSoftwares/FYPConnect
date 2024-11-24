@@ -44,6 +44,13 @@ public class studentDashboardScreenController {
 	public TextArea student_username;
 
 	@FXML
+	public Button ResourcesButton;
+	
+	
+	@FXML
+	public Button ViewFeedbackButton;
+	
+	@FXML
 	public Button SubmitButton;
 	
 	public studentDashboardScreenController() {
@@ -70,10 +77,12 @@ public class studentDashboardScreenController {
 		if (dbHandler.getGroupName(user.getUsername()) == "No Group Selected"
 				&& !dbHandler.isGroupLeader(user.getUsername())) {
 			SubmitButton.setDisable(true);
+			ViewFeedbackButton.setDisable(true);
 			
 		}
 		else {
 			SubmitButton.setDisable(false);
+			ViewFeedbackButton.setDisable(false);
 		}
 		
 		HomeButton.fire();
@@ -123,10 +132,12 @@ public class studentDashboardScreenController {
 		if (dbHandler.getGroupName(user.getUsername()) == "No Group Selected"
 				&& !dbHandler.isGroupLeader(user.getUsername())) {
 			SubmitButton.setDisable(true);
+			ViewFeedbackButton.setDisable(true);
 			
 		}
 		else {
 			SubmitButton.setDisable(false);
+			ViewFeedbackButton.setDisable(false);
 		}
 		
 		loadPage("studentHome");
@@ -183,6 +194,11 @@ public class studentDashboardScreenController {
 	@FXML
 	public void submitDeliverables(MouseEvent me) {
 		this.loadPage("submitDeliverables");
+	}
+	
+	@FXML
+	public void viewFeedback(MouseEvent me) {
+		this.loadPage("viewFeedbackScreen");
 	}
 	
 	private void loadPage(String resource) {

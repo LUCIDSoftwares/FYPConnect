@@ -16,7 +16,7 @@
             <Button fx:id="JoinGroupButton" mnemonicParsing="false" onMouseClicked="#joinGroups" prefHeight="85.0" prefWidth="101.0" text="Join Groups" />
             <Button fx:id="ProjectsButton" mnemonicParsing="false" prefHeight="85.0" prefWidth="101.0" text="Projects" />
             <Button fx:id="SubmitButton" mnemonicParsing="false" onMouseClicked="#submitDeliverables" prefHeight="85.0" prefWidth="101.0" text="Submit" />
-            <Button fx:id="ViewFeedbackButton" mnemonicParsing="false" prefHeight="85.0" prefWidth="101.0" text="View Feedback" />
+            <Button fx:id="ViewFeedbackButton" mnemonicParsing="false" onMouseClicked="#viewFeedback" prefHeight="85.0" prefWidth="101.0" text="View Feedback" />
             <Button fx:id="ResourcesButton" mnemonicParsing="false" onMouseClicked="#displayResources" prefHeight="85.0" prefWidth="101.0" text="Resources" />
          </children>
       </VBox>
