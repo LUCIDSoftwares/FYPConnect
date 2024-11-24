@@ -34,5 +34,9 @@ public class AdminService {
 		return user;
 	}
 	
+	public int updateUser(String username, String name, String email, String password, double cgpa) {
+		
+		return this.dbHandler.updateUser(username, name, email, password, cgpa);
+	}
 	
 }

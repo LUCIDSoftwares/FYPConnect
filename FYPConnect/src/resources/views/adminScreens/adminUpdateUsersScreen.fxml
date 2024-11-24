@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane fx:id="ap" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.adminScreens.AdminUpdateUsersScreenController">
+   <children>
+      <Label layoutX="365.0" layoutY="34.0" text="User Update Manager" />
+      <Button fx:id="updateUserButton" layoutX="397.0" layoutY="327.0" mnemonicParsing="false" onAction="#updateUser" text="Update User" />
+      <TextArea fx:id="messageBoxTextArea" editable="false" layoutX="130.0" layoutY="394.0" prefHeight="200.0" prefWidth="623.0" />
+      <Label layoutX="50.0" layoutY="87.0" text="Enter the Username:" />
+      <Label layoutX="50.0" layoutY="134.0" text="New Name (Optional) :" />
+      <Label layoutX="50.0" layoutY="178.0" text="New Email (Optional) :" />
+      <Label layoutX="50.0" layoutY="222.0" text="New Password (Optional) :" />
+      <Label layoutX="50.0" layoutY="265.0" text="New Student CGPA (Optional) :" />
+      <TextField fx:id="usernameTextField" layoutX="265.0" layoutY="82.0" prefHeight="26.0" prefWidth="315.0" />
+      <TextField fx:id="emailTextField" layoutX="265.0" layoutY="173.0" prefHeight="26.0" prefWidth="315.0" />
+      <TextField fx:id="nameTextField" layoutX="265.0" layoutY="129.0" prefHeight="26.0" prefWidth="315.0" />
+      <TextField fx:id="passwordTextField" layoutX="265.0" layoutY="217.0" prefHeight="26.0" prefWidth="315.0" />
+      <TextField fx:id="cgpaTextField" layoutX="265.0" layoutY="260.0" prefHeight="26.0" prefWidth="315.0" />
+   </children>
+</AnchorPane>

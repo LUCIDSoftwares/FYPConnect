@@ -275,4 +275,94 @@ public class DBHandler extends PersistanceHandler{
 		return userArrayList;
 	}
 	
+	
+	
+	
+	
+	public int updateUser(String username, String name, String email, String password, double cgpa) {
+		if(this.establishConnection() == false)
+			return -3;
+		
+		int flag = -2;
+		
+		try {
+			// first check if that username exists or not and get its user type
+			String sqlQuery1 = "SELECT COUNT(1), usertype\r\n"
+					+ "FROM User\r\n"
+					+ "WHERE username = ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setString(1, username);
+			
+			ResultSet result1 = statement1.executeQuery();
+			boolean userExists = false;
+			String userType = "Admin";
+				
+			if(result1.next()) {
+				if(result1.getInt(1) >= 1) {
+					userExists = true;
+					flag = -1;
+					userType = result1.getString(2);
+				}
+			}
+			
+			// now we can update it
+			if(userExists && userType.equalsIgnoreCase("Faculty") == true && cgpa >= 0.0)
+				flag = -10;
+			else if(userExists && userType.equalsIgnoreCase("Admin") == false) {
+				String sqlQuery2 = "UPDATE User";
+				
+				if(name == null)
+					sqlQuery2 = sqlQuery2 + " SET name = User.name";
+				else
+					sqlQuery2 = sqlQuery2 + " SET name = ?";
+				if(password != null)
+					sqlQuery2 = sqlQuery2 + ", password = ?";
+				if(email != null)
+					sqlQuery2 = sqlQuery2 + ", email = ?";
+				if(cgpa >= 0.0  && userType.equalsIgnoreCase("Student"))
+					sqlQuery2 = sqlQuery2 + ", cgpa = ?";
+				sqlQuery2 = sqlQuery2 + " WHERE username = ?;";
+				
+				int counter = 1;
+				
+				PreparedStatement statement2 = this.connection.prepareStatement(sqlQuery2);
+				if(name != null) {
+					statement2.setString(counter, name);
+					++counter;
+				}
+				if(password != null) {
+					statement2.setString(counter, password);
+					++counter;
+				}
+				if(email != null) {
+					statement2.setString(counter, email);
+					++counter;
+				}
+				if(cgpa >= 0.0  && userType.equalsIgnoreCase("Student")) {
+					statement2.setDouble(counter, cgpa);
+					++counter;
+				}
+				
+				statement2.setString(counter, username);
+				
+				if(statement2.executeUpdate() <= 0)
+					flag = 0;
+				else
+					flag = 1;
+			}
+		
+		} catch (SQLException e) {
+			if(e instanceof SQLIntegrityConstraintViolationException == false) {
+				System.out.println("Exception thrown in the updateUser(String, String, String, String, double)"
+						+ " method of the DBHandler class");
+				e.printStackTrace();
+			}
+			else
+				flag = -5;
+		}
+		
+		this.closeConnection();
+		return flag;
+	}
+	
 }

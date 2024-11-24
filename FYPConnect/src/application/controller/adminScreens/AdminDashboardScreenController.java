@@ -123,6 +123,7 @@ public class AdminDashboardScreenController {
     
     @FXML
     public void updateUsers(MouseEvent me) {
+    	this.loadPage("adminUpdateUsersScreen");
     	System.out.println("Update Users Button Clicked");
     }
     

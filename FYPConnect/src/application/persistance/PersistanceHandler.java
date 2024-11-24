@@ -20,4 +20,6 @@ public abstract class PersistanceHandler {
 	
 	public abstract ArrayList<User> getUserArrayListByType(String userType);
 	
+	public abstract int updateUser(String username, String name, String email, String password, double cpga);
+	
 }
