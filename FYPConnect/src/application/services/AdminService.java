@@ -39,4 +39,14 @@ public class AdminService {
 		return this.dbHandler.updateUser(username, name, email, password, cgpa);
 	}
 	
+	public int deleteUserbyId(int userId) {
+		
+		return this.dbHandler.deleteUserById(userId);
+	}
+	
+	public int deleteUserByUsername(String username) {
+		
+		return this.dbHandler.deleteUserByUsername(username);
+	}
+	
 }

@@ -129,6 +129,7 @@ public class AdminDashboardScreenController {
     
     @FXML
 	public void deleteUsers(MouseEvent me) {
+    	this.loadPage("adminDeleteUsersScreen");
     	System.out.println("Delete Users Button");
 	}
     
