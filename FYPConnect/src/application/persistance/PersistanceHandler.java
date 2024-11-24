@@ -3,11 +3,11 @@ package application.persistance;
 import java.util.Date;
 import java.util.ArrayList;
 
-<<<<<<< Updated upstream
+
 import application.datamodel.Deliverable;
-=======
+
 import application.datamodel.Project;
->>>>>>> Stashed changes
+
 import application.datamodel.Resource;
 import application.datamodel.User;
 
@@ -68,7 +68,7 @@ public abstract class PersistanceHandler {
 	
 	public abstract ArrayList<Resource> getResourcesByTitle(String title);
 	
-<<<<<<< Updated upstream
+
 	public abstract ArrayList<Deliverable> getAllDeliverables();
 	
 	public abstract ArrayList<Deliverable> getAllSubmittedDeliverables(String group_name);
@@ -80,7 +80,7 @@ public abstract class PersistanceHandler {
 	public abstract String getGrade(int deliverableId, String group_name);
 	
 	public abstract String getGrader(int deliverableId, String group_name);
-=======
+
 	public abstract ArrayList<Project> getAllAvailableProjects();
 	
 	public abstract ArrayList<Project> getAllAvailableProjects(String projectTitle, int groupId);
@@ -92,7 +92,7 @@ public abstract class PersistanceHandler {
 	public abstract int getGroupId(int userId);
 	
 	public abstract void createMentorshipRequest(int projectId, int groupId);
->>>>>>> Stashed changes
+
 	
 //>>>>>>> Stashed changes
 }

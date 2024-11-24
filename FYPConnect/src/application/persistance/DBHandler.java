@@ -8,11 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-<<<<<<< Updated upstream
+
 import application.datamodel.Deliverable;
-=======
+
 import application.datamodel.Project;
->>>>>>> Stashed changes
+
 import application.datamodel.Resource;
 import application.datamodel.User;
 import application.services.*;
