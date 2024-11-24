@@ -186,6 +186,12 @@ public class studentDashboardScreenController {
 	    JoinGroupButton.setText("-Join Groups-");
 	}
 
+	
+	@FXML
+	public void projects(MouseEvent me) {
+		this.loadPage("projectScreen");
+	}
+	
 	@FXML
 	public void displayResources(MouseEvent me) {
 		this.loadPage("downloadResourcesScreen");

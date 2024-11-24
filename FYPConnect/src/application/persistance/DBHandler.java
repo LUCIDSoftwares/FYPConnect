@@ -8,7 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+<<<<<<< Updated upstream
 import application.datamodel.Deliverable;
+=======
+import application.datamodel.Project;
+>>>>>>> Stashed changes
 import application.datamodel.Resource;
 import application.datamodel.User;
 import application.services.*;
@@ -1233,6 +1237,314 @@ public class DBHandler extends PersistanceHandler {
 			return false;
 		}
 
+	}
+
+	// returns the list of all projects which haven't been awarded to a group
+	public ArrayList<Project> getAllAvailableProjects() {
+		if(this.establishConnection() == false)
+			return null;
+		
+		ArrayList<Project> availableProjectArrayList = null;
+		
+		try {
+			String sqlQuery1 = "SELECT p.ID, p.title, p.description, p.doc_link, p.faculty_ID, u.name AS 'faculty_name', u.username AS 'faculty_username'\r\n"
+					+ "FROM project AS p \r\n"
+					+ "LEFT OUTER JOIN groupT AS g\r\n"
+					+ "ON p.ID = g.projectID\r\n"
+					+ "INNER JOIN User AS u\r\n"
+					+ "ON p.faculty_ID = u.ID\r\n"
+					+ "WHERE g.student1 IS NULL OR g.student2 IS NULL;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next()) {
+				availableProjectArrayList = new ArrayList<Project>();
+				Project proj = new Project(result1.getInt("ID"),
+											result1.getString("title"),
+											result1.getString("description"),
+											result1.getString("doc_link"),
+											result1.getInt("faculty_ID"),
+											result1.getString("faculty_username"),
+											result1.getString("faculty_name") );
+				availableProjectArrayList.add(proj);
+				
+				while(result1.next()) {
+					proj = new Project(result1.getInt("ID"),
+							result1.getString("title"),
+							result1.getString("description"),
+							result1.getString("doc_link"),
+							result1.getInt("faculty_ID"),
+							result1.getString("faculty_username"),
+							result1.getString("faculty_name") );				
+					availableProjectArrayList.add(proj);
+				}
+				
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getAllAvailableProjects() method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		
+		this.closeConnection();
+		return availableProjectArrayList;
+	}
+	
+	public int getGroupId(int userId) {
+		if(this.establishConnection() == false)
+			return -1;
+		int groupId = -1;
+		
+		try {
+			String sqlQuery1 = "SELECT ID\r\n"
+					+ "FROM groupT\r\n"
+					+ "WHERE leader = ? || student1 = ? || student2 = ?;";
+			PreparedStatement statement1;
+	
+			statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, userId);
+			statement1.setInt(2, userId);
+			statement1.setInt(3, userId);
+			
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next())
+				groupId = result1.getInt(1);
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getGroupId(int) mehtod of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return groupId;
+	}
+	
+	public ArrayList<Project> getAllAvailableProjects(String projectTitle, int groupId) {
+		if(this.establishConnection() == false)
+			return null;
+		
+		ArrayList<Project> availableProjectArrayList = null;
+		
+		try {
+//			String sqlQuery1 = "SELECT p.ID, p.title, p.description, p.doc_link, p.faculty_ID, u.name AS 'faculty_name', u.username AS 'faculty_username'\r\n"
+//					+ "FROM project AS p \r\n"
+//					+ "LEFT OUTER JOIN groupT AS g\r\n"
+//					+ "ON p.ID = g.projectID\r\n"
+//					+ "INNER JOIN User AS u\r\n"
+//					+ "ON p.faculty_ID = u.ID\r\n"
+//					+ "WHERE g.student1 IS NULL OR g.student2 IS NULL;";
+			
+			String sqlQuery1 = "SELECT p.ID, p.title, p.description, p.doc_link, p.faculty_ID, u.name AS 'faculty_name', u.username AS 'faculty_username'\r\n"
+					+ "FROM project AS p\r\n"
+					+ "LEFT OUTER JOIN Ment_Req AS m\r\n"
+					+ "ON p.ID = m.PROJECT_ID\r\n"
+					+ "INNER JOIN User AS u\r\n"
+					+ "ON p.faculty_ID = u.ID\r\n"
+					+ "WHERE (m.Status IS NULL\r\n"
+					+ "OR (m.Status <> 'accepted' AND (m.GroupID <> ? || m.status <> 'pending')))";
+			
+			if(projectTitle != null)
+				sqlQuery1 = sqlQuery1 + " AND p.title LIKE ?;";
+			else
+				sqlQuery1 = sqlQuery1 + ";";
+			
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, groupId);
+			if(projectTitle != null)
+				statement1.setString(2, "%" + projectTitle + "%");
+			
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next()) {
+				availableProjectArrayList = new ArrayList<Project>();
+				Project proj = new Project(result1.getInt("ID"),
+											result1.getString("title"),
+											result1.getString("description"),
+											result1.getString("doc_link"),
+											result1.getInt("faculty_ID"),
+											result1.getString("faculty_username"),
+											result1.getString("faculty_name") );
+				availableProjectArrayList.add(proj);
+				
+				while(result1.next()) {
+					proj = new Project(result1.getInt("ID"),
+							result1.getString("title"),
+							result1.getString("description"),
+							result1.getString("doc_link"),
+							result1.getInt("faculty_ID"),
+							result1.getString("faculty_username"),
+							result1.getString("faculty_name") );				
+					availableProjectArrayList.add(proj);
+				}
+				
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getAllAvailableProjects(String, int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return availableProjectArrayList;
+	}
+	
+	public ArrayList<Project> getAllProjectsWithMentorshipRequest(String projectTitle, int groupId) {
+		if(this.establishConnection() == false)
+			return null;
+		
+		ArrayList<Project> availableProjectArrayList = null;
+		
+		try {
+//			String sqlQuery1 = "SELECT p.ID, p.title, p.description, p.doc_link, p.faculty_ID, u.name AS 'faculty_name', u.username AS 'faculty_username'\r\n"
+//					+ "FROM project AS p \r\n"
+//					+ "LEFT OUTER JOIN groupT AS g\r\n"
+//					+ "ON p.ID = g.projectID\r\n"
+//					+ "INNER JOIN User AS u\r\n"
+//					+ "ON p.faculty_ID = u.ID\r\n"
+//					+ "WHERE g.student1 IS NULL OR g.student2 IS NULL;";
+			
+			String sqlQuery1 = "SELECT p.ID, p.title, p.description, p.doc_link, p.faculty_ID, u.name AS 'faculty_name', u.username AS 'faculty_username'\r\n"
+					+ "FROM project AS p\r\n"
+					+ "INNER JOIN Ment_Req AS m\r\n"
+					+ "ON p.ID = m.PROJECT_ID\r\n"
+					+ "INNER JOIN User AS u\r\n"
+					+ "ON p.faculty_ID = u.ID\r\n"
+					+ "WHERE m.Status = 'pending'\r\n"
+					+ "AND m.GroupID = ?";
+			
+			if(projectTitle != null)
+				sqlQuery1 = sqlQuery1 + " AND p.title LIKE ?;";
+			else
+				sqlQuery1 = sqlQuery1 + ";";
+			
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, groupId);
+			if(projectTitle != null)
+				statement1.setString(2, "%" + projectTitle + "%");
+			
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next()) {
+				availableProjectArrayList = new ArrayList<Project>();
+				Project proj = new Project(result1.getInt("ID"),
+											result1.getString("title"),
+											result1.getString("description"),
+											result1.getString("doc_link"),
+											result1.getInt("faculty_ID"),
+											result1.getString("faculty_username"),
+											result1.getString("faculty_name") );
+				availableProjectArrayList.add(proj);
+				
+				while(result1.next()) {
+					proj = new Project(result1.getInt("ID"),
+							result1.getString("title"),
+							result1.getString("description"),
+							result1.getString("doc_link"),
+							result1.getInt("faculty_ID"),
+							result1.getString("faculty_username"),
+							result1.getString("faculty_name") );				
+					availableProjectArrayList.add(proj);
+				}
+				
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getAllProjectsWithMentorshipRequest(String, int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return availableProjectArrayList;
+	}
+	
+	public ArrayList<Project> getAllProjectsWithDeclinedRequests(String projectTitle, int groupId) {
+		if(this.establishConnection() == false)
+			return null;
+		
+		ArrayList<Project> availableProjectArrayList = null;
+		
+		try {
+//			String sqlQuery1 = "SELECT p.ID, p.title, p.description, p.doc_link, p.faculty_ID, u.name AS 'faculty_name', u.username AS 'faculty_username'\r\n"
+//					+ "FROM project AS p \r\n"
+//					+ "LEFT OUTER JOIN groupT AS g\r\n"
+//					+ "ON p.ID = g.projectID\r\n"
+//					+ "INNER JOIN User AS u\r\n"
+//					+ "ON p.faculty_ID = u.ID\r\n"
+//					+ "WHERE g.student1 IS NULL OR g.student2 IS NULL;";
+			
+			String sqlQuery1 = "SELECT p.ID, p.title, p.description, p.doc_link, p.faculty_ID, u.name AS 'faculty_name', u.username AS 'faculty_username'\r\n"
+					+ "FROM project AS p\r\n"
+					+ "INNER JOIN Ment_Req AS m\r\n"
+					+ "ON p.ID = m.PROJECT_ID\r\n"
+					+ "INNER JOIN User AS u\r\n"
+					+ "ON p.faculty_ID = u.ID\r\n"
+					+ "WHERE m.Status = 'declined'\r\n"
+					+ "AND m.GroupID = ?";
+			
+			if(projectTitle != null)
+				sqlQuery1 = sqlQuery1 + " AND p.title LIKE ?;";
+			else
+				sqlQuery1 = sqlQuery1 + ";";
+			
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, groupId);
+			if(projectTitle != null)
+				statement1.setString(2, "%" + projectTitle + "%");
+			
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next()) {
+				availableProjectArrayList = new ArrayList<Project>();
+				Project proj = new Project(result1.getInt("ID"),
+											result1.getString("title"),
+											result1.getString("description"),
+											result1.getString("doc_link"),
+											result1.getInt("faculty_ID"),
+											result1.getString("faculty_username"),
+											result1.getString("faculty_name") );
+				availableProjectArrayList.add(proj);
+				
+				while(result1.next()) {
+					proj = new Project(result1.getInt("ID"),
+							result1.getString("title"),
+							result1.getString("description"),
+							result1.getString("doc_link"),
+							result1.getInt("faculty_ID"),
+							result1.getString("faculty_username"),
+							result1.getString("faculty_name") );				
+					availableProjectArrayList.add(proj);
+				}
+				
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getAllProjectsWithDeclinedRequests(String, int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return availableProjectArrayList;
+	}
+	
+	public void createMentorshipRequest(int projectId, int groupId) {
+		if(this.establishConnection() == false)
+			return;
+		
+		try {
+			String sqlQuery1 = "INSERT INTO Ment_Req (GroupID, Project_ID, Status) VALUES (?, ?, 'pending');";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, groupId);
+			statement1.setInt(2, projectId);
+			
+			if(statement1.executeUpdate() <= 0)
+				System.out.println("Could not create a mentorship request");
+			else
+				System.out.println("ban gayi mentorship request");
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the createMentorshipRequest(int, int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
 	}
 	
 	@Override
