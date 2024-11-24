@@ -186,10 +186,18 @@ public class studentDashboardScreenController {
 	    JoinGroupButton.setText("-Join Groups-");
 	}
 
-	
+
+	// if the student is in a complete group we will show the project info screen then
 	@FXML
 	public void projects(MouseEvent me) {
-		this.loadPage("projectScreen");
+
+		// check if the user is in a group or an incomplete group
+		int groupId = this.dbHandler.getGroupId(UserSession.getInstance().getCurrentUser().getId());
+		
+		if(groupId <= 0 ||  this.dbHandler.hasGroupBeenAssignedProject(groupId) == false)
+			this.loadPage("projectScreen");
+		else
+			this.loadPage("projectInfoScreen");
 	}
 	
 	@FXML

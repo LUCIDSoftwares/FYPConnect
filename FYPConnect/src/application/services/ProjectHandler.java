@@ -48,5 +48,12 @@ public class ProjectHandler {
 		
 		return this.dbHandler.getAllProjectsWithDeclinedRequests(projectTitle, groupId);		
 	}
+	
+	public Project getProjectInformation() {
+		User user = UserSession.getInstance().getCurrentUser();
+		int groupId = this.dbHandler.getGroupId(user.getId());
+		
+		return this.dbHandler.getProjectByGroupId(groupId);
+	}
 
 }
