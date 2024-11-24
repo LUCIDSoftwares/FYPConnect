@@ -266,7 +266,7 @@ public class DBHandler extends PersistanceHandler {
 		User supervisor = null;
 
 		String sqlQuery1 = """
-				    SELECT u.ID, u.name, u.password, u.username, u.email
+				    SELECT u.ID, u.name, u.password, u.username, u.email, u.usertype
 				    FROM groupT g
 				    JOIN project p ON g.projectID = p.ID
 				    JOIN User u ON p.faculty_ID = u.ID
@@ -1695,6 +1695,69 @@ public class DBHandler extends PersistanceHandler {
 	}
 
 	
-//>>>>>>> Stashed changes
-
+	public Project getProjectByGroupId(int groupId) {
+		if(this.establishConnection() == false)
+			return null;
+		Project project = null;
+		
+		try {
+			String sqlQuery1 = "SELECT p.ID, p.title, p.description, p.doc_link, p.faculty_ID, u.name AS 'faculty_name', u.username AS 'faculty_username'\r\n"
+					+ "FROM project AS p\r\n"
+					+ "INNER JOIN groupT AS g\r\n"
+					+ "ON p.ID = g.projectID\r\n"
+					+ "INNER JOIN User AS u\r\n"
+					+ "ON p.faculty_ID = u.ID \r\n"
+					+ "WHERE g.ID = ?";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, groupId);
+			
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next()) {
+				project = new Project(result1.getInt("ID"),
+						result1.getString("title"),
+						result1.getString("description"),
+						result1.getString("doc_link"),
+						result1.getInt("faculty_ID"),
+						result1.getString("faculty_username"),
+						result1.getString("faculty_name"));
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getProjectByGroupId(int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return project;
+	}
+	
+	public boolean hasGroupBeenAssignedProject(int groupId) {
+		if(this.establishConnection() == false) 
+			return false;
+		
+		boolean flag = false;
+	
+		try {
+			String sqlQuery1 = "SELECT COUNT(1)\r\n"
+					+ "FROM groupT\r\n"
+					+ "WHERE groupT.ID = ?\r\n"
+					+ "AND projectID IS NOT NULL;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, groupId);
+				
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next()) {
+				if(result1.getInt(1) >= 1) 
+					flag = true;
+			}
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the hasGroupBeenAssignedProject(int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return flag;
+	}
+	
+	
 }

@@ -53,7 +53,6 @@ public abstract class PersistanceHandler {
 	
 	public abstract String getGroupLeader(String GroupName);
 	
-//<<<<<<< Updated upstream
 	public abstract boolean acceptInvite(String GroupName, String Username);
 	
 	public abstract boolean declineInvite(String GroupName, String Username);
@@ -63,12 +62,11 @@ public abstract class PersistanceHandler {
 	public abstract boolean acceptRequest(String GroupName, String Username);
 	
 	public abstract boolean declineRequest(String GroupName, String Username);
-//=======
+
 	public abstract ArrayList<Resource> getAllResources();
 	
 	public abstract ArrayList<Resource> getResourcesByTitle(String title);
 	
-
 	public abstract ArrayList<Deliverable> getAllDeliverables();
 	
 	public abstract ArrayList<Deliverable> getAllSubmittedDeliverables(String group_name);
@@ -93,6 +91,7 @@ public abstract class PersistanceHandler {
 	
 	public abstract void createMentorshipRequest(int projectId, int groupId);
 
+	public abstract Project getProjectByGroupId(int groupId);
 	
-//>>>>>>> Stashed changes
+	public abstract boolean hasGroupBeenAssignedProject(int groupId);
 }
