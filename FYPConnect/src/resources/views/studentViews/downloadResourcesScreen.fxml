@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="ap" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.studentViews.DownloadResourcesScreenController">
+   <children>
+      <TableView fx:id="resourceTableView" layoutX="45.0" layoutY="129.0" prefHeight="405.0" prefWidth="810.0">
+        <columns>
+          <TableColumn fx:id="resourceIdColumn" prefWidth="75.0" text="Resource ID" />
+          <TableColumn fx:id="titleColumn" prefWidth="154.39998626708984" text="Title" />
+            <TableColumn fx:id="descriptionColumn" prefWidth="433.6000061035156" text="Description" />
+            <TableColumn fx:id="uploaderUsernameColumn" minWidth="6.39996337890625" prefWidth="147.2000732421875" text="Uploader Username" />
+        </columns>
+      </TableView>
+      <Label layoutX="258.0" layoutY="33.0" text="Welcome to the Resource Center">
+         <font>
+            <Font name="Century Gothic Bold Italic" size="24.0" />
+         </font></Label>
+      <Button fx:id="downloadFileButton" layoutX="715.0" layoutY="554.0" mnemonicParsing="false" onAction="#downloadResource" text="Download Selected File" />
+      <Label layoutX="58.0" layoutY="97.0" text="Search Resource by Title">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font></Label>
+      <TextArea fx:id="promptTextArea" editable="false" layoutX="45.0" layoutY="543.0" prefHeight="46.0" prefWidth="406.0" />
+      <TextField fx:id="titleTextField" layoutX="208.0" layoutY="91.0" prefHeight="26.0" prefWidth="275.0" promptText="Ex: Thesis Template" />
+      <Button fx:id="searchButton" layoutX="508.0" layoutY="91.0" mnemonicParsing="false" onAction="#searchFilesByTitle" text="Search" />
+   </children>
+</AnchorPane>

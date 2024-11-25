@@ -1,5 +1,10 @@
 package application.controller;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import application.datamodel.*;
 import application.persistance.DBHandler;
 import application.services.LoginService;
@@ -53,6 +58,8 @@ public class LoginScreenController {
 		}
 		else {
 			UserSession.getInstance().setCurrentUser(user);
+			writeusernameToFile(username, "src/application/session/lastSession.log");
+			
 			if (user instanceof Admin) {
 				try {
 
@@ -78,7 +85,7 @@ public class LoginScreenController {
 			}
 			else {
 				try {
-					Parent root = FXMLLoader.load(getClass().getResource("/resources/views/studentHomeScreen.fxml"));
+					Parent root = FXMLLoader.load(getClass().getResource("/resources/views/studentDashboardScreen.fxml"));
 					Scene scene = new Scene(root);
 					Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 					stage.setScene(scene);
@@ -91,5 +98,17 @@ public class LoginScreenController {
 		
 		
 	}
+	
+    public void writeusernameToFile(String word, String filePath) {
+        File file = new File(filePath);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+            writer.write(word);
+            writer.newLine(); // Add a newline after the word
+            System.out.println("Session active: " + word);
+        } catch (IOException e) {
+            System.out.println("An error occurred while activating session: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 	
 }

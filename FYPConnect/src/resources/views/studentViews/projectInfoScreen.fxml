@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="ap" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.studentViews.ProjectInfoScreenController">
+   <children>
+      <Label layoutX="369.0" layoutY="37.0" text="Your Project Information" />
+      <Label layoutX="50.0" layoutY="89.0" text="Project Id:" />
+      <Label layoutX="50.0" layoutY="132.0" text="Project Title:" />
+      <Button fx:id="downloadButton" layoutX="647.0" layoutY="522.0" mnemonicParsing="false" onMouseClicked="#downloadProposal" text="Download Project Proposal Document" />
+      <TextField fx:id="projectIdTextArea" editable="false" layoutX="192.0" layoutY="84.0" prefHeight="26.0" prefWidth="225.0" />
+      <TextField fx:id="projectTitleTextArea" editable="false" layoutX="192.0" layoutY="128.0" prefHeight="26.0" prefWidth="674.0" />
+      <Label layoutX="50.0" layoutY="184.0" text="Project Description:" />
+      <Label layoutX="50.0" layoutY="466.0" text="Supervisor Username:" />
+      <Label layoutX="50.0" layoutY="517.0" text="Supervisor Name:" />
+      <TextArea fx:id="projectDescriptionTextArea" editable="false" layoutX="192.0" layoutY="184.0" prefHeight="257.0" prefWidth="674.0" />
+      <TextField fx:id="usernameTextArea" editable="false" layoutX="192.0" layoutY="462.0" prefHeight="26.0" prefWidth="336.0" />
+      <TextField fx:id="nameTextArea" editable="false" layoutX="192.0" layoutY="513.0" prefHeight="26.0" prefWidth="336.0" />
+      <TextArea fx:id="promptTextArea" editable="false" layoutX="529.0" layoutY="564.0" prefHeight="39.0" prefWidth="336.0" />
+   </children>
+</AnchorPane>

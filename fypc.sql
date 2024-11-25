@@ -28,9 +28,9 @@ create table groupT(
 	ID int primary key auto_increment,
     name varchar(50) not null,
     leader int not null,
-    student1 int not null,
-    student2 int not null,
-    projectID int not null,
+    student1 int,
+    student2 int,
+    projectID int,
     FOREIGN KEY (leader) references User(ID),
     FOREIGN KEY (student1) references User(ID),
     FOREIGN KEY (student2) references User(ID),
@@ -88,7 +88,7 @@ create table Deliverable(
 create table Submission(
 	ID int primary key auto_increment,
 	Del_ID int not null, 	# Deliverable ID
-    submission_time time not null,
+    submission_time datetime not null,
     groupID int not null,
     content_link varchar(100),
     foreign key (Del_ID) references Deliverable(ID),
@@ -111,3 +111,15 @@ create table Feedback(
     );
     
     # drop table Feedback
+
+CREATE TABLE Resource(
+	ID int primary key auto_increment,
+    title varchar(50) not null,
+    description varchar(100) not null,
+    uploader_username varchar(25) not null,
+    filePath varchar(100) not null,
+    
+    FOREIGN KEY (uploader_username) REFERENCES User(username)
+);
+
+    # drop table Resource

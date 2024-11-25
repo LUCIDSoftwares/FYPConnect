@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Ellipse?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.studentViews.viewFeedbackContoller">
+   <children>
+      <Text layoutX="252.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to the Feedback Center">
+         <font>
+            <Font name="Century Gothic Bold Italic" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="40.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select a submiited Deliverable from the following:">
+         <font>
+            <Font name="System Italic" size="12.0" />
+         </font>
+      </Text>
+      <TextArea fx:id="commentText" editable="false" layoutX="141.0" layoutY="342.0" prefHeight="105.0" prefWidth="256.0" promptText="Feedback from the supervisor">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font></TextArea>
+      <TextField fx:id="gradeText" editable="false" layoutX="141.0" layoutY="298.0" promptText="Grade">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font></TextField>
+      <Text layoutX="45.0" layoutY="366.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Comments:">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font></Text>
+      <Text layoutX="45.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Grade:">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font>
+      </Text>
+      <Text fx:id="noFeedbackText" fill="RED" layoutX="155.0" layoutY="265.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="321.3330078125">
+         <font>
+            <Font name="Century Gothic Italic" size="13.0" />
+         </font>
+      </Text>
+      <Text layoutX="45.0" layoutY="488.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Graded by:">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font>
+      </Text>
+      <TextField fx:id="supervisortext" editable="false" layoutX="143.0" layoutY="474.0" prefHeight="23.0" prefWidth="250.0" promptText="Supervisor">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font>
+      </TextField>
+      <Ellipse fill="DODGERBLUE" layoutX="797.0" layoutY="530.0" radiusX="151.0" radiusY="144.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+      <Ellipse fill="#ff3c00" layoutX="631.0" layoutY="560.0" radiusX="113.0" radiusY="113.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+      <Ellipse fill="#00ff0f" layoutX="712.0" layoutY="431.0" radiusX="113.0" radiusY="113.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+      <Ellipse fill="#e7ff00" layoutX="845.0" layoutY="447.0" radiusX="113.0" radiusY="113.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+      <ComboBox fx:id="deliverableCombo" layoutX="39.0" layoutY="82.0" onAction="#handleDelSelect" prefHeight="25.0" prefWidth="820.0" promptText="Select a Deliverable to get the feedback" />
+      <Text layoutX="40.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Feedback:">
+         <font>
+            <Font name="Century Gothic Bold Italic" size="18.0" />
+         </font>
+      </Text>
+      <TextField fx:id="del_uploader" editable="false" layoutX="140.0" layoutY="190.0" prefHeight="23.0" prefWidth="256.0" promptText="Uploader">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font>
+      </TextField>
+      <Text layoutX="41.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Deliverable Uploader:" wrappingWidth="79.94921875">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font>
+      </Text>
+      <TextArea fx:id="del_description" editable="false" layoutX="138.0" layoutY="116.0" prefHeight="65.0" prefWidth="722.0" promptText="Deliverable Description">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font>
+      </TextArea>
+      <Text layoutX="43.0" layoutY="140.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Description:">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>

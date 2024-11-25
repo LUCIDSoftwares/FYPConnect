@@ -73,7 +73,7 @@ public class ConcreteUserFactory extends UserFactory {
 	        }
 
 	    } catch (SQLException e) {
-	        System.out.println("Exception thrown in the createUser(ResultSet) method of the UserFactory class");
+	        System.out.println("Exception thrown in the createUser(ResultSet) method of the ConcreteUserFactory class");
 	        e.printStackTrace();
 	    }
 	    return user;

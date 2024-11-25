@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="ap" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.studentViews.ProjectScreenController">
+   <children>
+      <Text layoutX="258.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to the Project Manager">
+         <font>
+            <Font name="Century Gothic Bold Italic" size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="40.0" layoutY="101.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select What to See:">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font>
+      </Text>
+      <TableView fx:id="projectTableView" layoutX="27.0" layoutY="160.0" prefHeight="390.0" prefWidth="840.0">
+        <columns>
+          <TableColumn fx:id="projectIdColumn" prefWidth="75.0" text="Project Id" />
+          <TableColumn fx:id="titleColumn" prefWidth="139.99999237060547" text="Title" />
+            <TableColumn fx:id="DescriptionColumn" prefWidth="333.60003662109375" text="Description" />
+            <TableColumn fx:id="facultyNameColumn" prefWidth="144.7999267578125" text="Faculty Name" />
+            <TableColumn fx:id="facultyUsernameColumn" prefWidth="148.0001220703125" text="Faculty Username" />
+        </columns>
+      </TableView>
+      <Label layoutX="40.0" layoutY="126.0" text="Search by Project Names:">
+         <font>
+            <Font name="Century Gothic Italic" size="12.0" />
+         </font></Label>
+      <TextField fx:id="projectNameTextField" layoutX="204.0" layoutY="120.0" prefHeight="26.0" prefWidth="391.0" promptText="Ex: AI say Paisay Kamana" />
+      <Button fx:id="projectRequestButton" layoutX="737.0" layoutY="562.0" mnemonicParsing="false" onMouseClicked="#sendProjectRequest" prefHeight="43.0" prefWidth="129.0" text="Send Project Request" />
+      <Button fx:id="proposalDownloadButton" layoutX="548.0" layoutY="562.0" mnemonicParsing="false" onMouseClicked="#downloadProjectProposal" prefHeight="43.0" prefWidth="173.0" text="Download Project Proposal" />
+      <TextArea fx:id="promptTextArea" layoutX="27.0" layoutY="562.0" prefHeight="43.0" prefWidth="486.0" />
+      <RadioButton fx:id="allAvailableProjectsRButton" layoutX="204.0" layoutY="87.0" mnemonicParsing="false" text="All Available Proejcts">
+         <toggleGroup>
+            <ToggleGroup fx:id="projectDisplayType" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="pendingProjectRequestRButton" layoutX="407.0" layoutY="87.0" mnemonicParsing="false" text="Projects with Requests Pending" toggleGroup="$projectDisplayType" />
+      <RadioButton fx:id="projectDeclinedRequestsRButton" layoutX="666.0" layoutY="87.0" mnemonicParsing="false" text="Projects with Declined Requests" toggleGroup="$projectDisplayType" />
+      <Button fx:id="displayProjectButton" layoutX="662.0" layoutY="120.0" mnemonicParsing="false" onMouseClicked="#displayProjects" prefHeight="26.0" prefWidth="132.0" text="Display" />
+   </children>
+</AnchorPane>
