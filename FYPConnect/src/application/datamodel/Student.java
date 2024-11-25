@@ -16,7 +16,12 @@ public class Student extends User {
 		super(id, name, password, username, email);
 		this.cgpa = cgpa;
 	}
+	public Student(String name, String username, String password, String email, double cgpa) {
+		super(-1, name, password, username, email);
+		this.cgpa = cgpa;
+	}
 	
+	@Override
 	public double getCgpa() {
 		return cgpa;
 	}

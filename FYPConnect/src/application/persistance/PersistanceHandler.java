@@ -1,17 +1,29 @@
 package application.persistance;
 
+import java.util.ArrayList;
+
 import application.datamodel.User;
 
 public abstract class PersistanceHandler {
 
-	public abstract void createUser(User user);
+	public abstract int createUser(User user);
 	
 	public abstract User retrieveUser(String username, String password);
+	
+	public abstract User retrieveUser(String username);
 	
 	public abstract int getNumOfUsers();
 	
 	public abstract int getNumOfGroups();
 	
 	public abstract int getNumOfProjects();
+	
+	public abstract ArrayList<User> getUserArrayListByType(String userType);
+	
+	public abstract int updateUser(String username, String name, String email, String password, double cpga);
+
+	public abstract int deleteUserById(int userId);
+	
+	public abstract int deleteUserByUsername(String username);
 	
 }

@@ -56,7 +56,7 @@ public class LoginScreenController {
 			if (user instanceof Admin) {
 				try {
 
-					Parent root = FXMLLoader.load(getClass().getResource("/resources/views/adminDashboardScreen.fxml"));
+					Parent root = FXMLLoader.load(getClass().getResource("/resources/views/adminScreens/adminDashboardScreen.fxml"));
 					Scene scene = new Scene(root);
 					Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 					stage.setScene(scene);

@@ -6,7 +6,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
 
+import application.datamodel.Admin;
+import application.datamodel.Faculty;
+import application.datamodel.Student;
 import application.datamodel.User;
 import application.services.*;
 
@@ -59,11 +64,60 @@ public class DBHandler extends PersistanceHandler{
 	}
 	
 	@Override
-	public void createUser(User user) {
-		this.establishConnection();
+	public int createUser(User user) {
+		if(this.establishConnection() == false)
+			return -1;
 		
+		String sqlQuery1 = "INSERT INTO User (name, password, usertype, cgpa, username, email) VALUES (?, ?, ?, ?, ?, ?);";
+		int userId = -1;
+		
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, user.getName());
+			preparedStatement1.setString(2, user.getPassword());
+			
+			if(user instanceof Admin) {
+				preparedStatement1.setString(3, "Admin");
+				preparedStatement1.setDouble(4, 0.0);
+			}
+			else if(user instanceof Faculty) {
+				preparedStatement1.setString(3, "Faculty");
+				preparedStatement1.setDouble(4, 0.0);
+			}
+			else if(user instanceof Student) {
+				preparedStatement1.setString(3, "Student");
+				preparedStatement1.setDouble(4, ((Student) user).getCgpa());
+			}
+			
+			preparedStatement1.setString(5, user.getUsername());
+			preparedStatement1.setString(6, user.getEmail());
+			
+			if(preparedStatement1.executeUpdate() <= 0) {
+				System.out.println("Can not create a user");
+			}
+			else {
+				// get the ID of the user just created and inserted into the database
+				String sqlQuery2 = "SELECT MAX(ID)\r\n"
+						+ "FROM User;";
+				preparedStatement1 = this.connection.prepareStatement(sqlQuery2);
+				ResultSet result1 = preparedStatement1.executeQuery();
+				if(result1.next()) {
+					userId = result1.getInt(1);
+				}
+			}
+				
+			
+		} catch (SQLException e) {
+			// integrity constraint violation exception is already handled by code so no need to throw exception
+		    if(e instanceof SQLIntegrityConstraintViolationException == false) {
+				System.out.println("Exception thrown in the createUser(User) method of the DBHandler Class");
+				e.printStackTrace();
+		    }
+
+		}
 		
 		this.closeConnection();
+		return userId;
 	}
 	
 	@Override
@@ -95,6 +149,32 @@ public class DBHandler extends PersistanceHandler{
 	}
 	
 	@Override
+	public User retrieveUser(String username) {
+		this.establishConnection();
+		User user = null;
+		
+		String sqlQuery1 = "SELECT * \r\n"
+				+ "FROM User \r\n"
+				+ "WHERE username = ?;";
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, username);
+			ResultSet result1 = preparedStatement1.executeQuery();
+			if(result1.next()) {
+				UserFactory concreteUserFactory = ConcreteUserFactory.getInstance();
+				user = concreteUserFactory.createUser(result1);
+			}
+		
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the retrieveUser(String) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return user;		
+	}
+	
+	@Override
 	public int getNumOfUsers() {
 		this.establishConnection();
 		int numOfUsers = 0;
@@ -116,7 +196,6 @@ public class DBHandler extends PersistanceHandler{
 		this.closeConnection();
 		return numOfUsers;
 	}
-
 	
 	@Override
 	public int getNumOfGroups() {
@@ -163,6 +242,351 @@ public class DBHandler extends PersistanceHandler{
 		this.closeConnection();
 		return numOfProjects;
 	}
+
 	
+	@Override
+	public ArrayList<User> getUserArrayListByType(String userType) {
+		if(this.establishConnection() == false)
+			return null;
+		
+		
+		ArrayList<User> userArrayList = null;
+//		boolean studentFlag = false;
+//		if(userType.equalsIgnoreCase("Student") == true) {
+//			studentFlag = true;
+//		}
+		String sqlQuery1 = "SELECT ID, name, password, cgpa, username, email\r\n"
+				+ "FROM User\r\n"
+				+ "WHERE usertype = ?;";
+		try {
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setString(1, userType);
+			
+			ResultSet result1 = statement1.executeQuery();
+			UserFactory concreteUserFactory = ConcreteUserFactory.getInstance();
+			userArrayList = concreteUserFactory.createUserArrayList(userType, result1);
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getUserArrayListByType(String) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return userArrayList;
+	}
+	
+	
+	
+	
+	
+	public int updateUser(String username, String name, String email, String password, double cgpa) {
+		if(this.establishConnection() == false)
+			return -3;
+		
+		int flag = -2;
+		
+		try {
+			// first check if that username exists or not and get its user type
+			String sqlQuery1 = "SELECT COUNT(1), usertype\r\n"
+					+ "FROM User\r\n"
+					+ "WHERE username = ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setString(1, username);
+			
+			ResultSet result1 = statement1.executeQuery();
+			boolean userExists = false;
+			String userType = "Admin";
+				
+			if(result1.next()) {
+				if(result1.getInt(1) >= 1) {
+					userExists = true;
+					flag = -1;
+					userType = result1.getString(2);
+				}
+			}
+			
+			// now we can update it
+			if(userExists && userType.equalsIgnoreCase("Faculty") == true && cgpa >= 0.0)
+				flag = -10;
+			else if(userExists && userType.equalsIgnoreCase("Admin") == false) {
+				String sqlQuery2 = "UPDATE User";
+				
+				if(name == null)
+					sqlQuery2 = sqlQuery2 + " SET name = User.name";
+				else
+					sqlQuery2 = sqlQuery2 + " SET name = ?";
+				if(password != null)
+					sqlQuery2 = sqlQuery2 + ", password = ?";
+				if(email != null)
+					sqlQuery2 = sqlQuery2 + ", email = ?";
+				if(cgpa >= 0.0  && userType.equalsIgnoreCase("Student"))
+					sqlQuery2 = sqlQuery2 + ", cgpa = ?";
+				sqlQuery2 = sqlQuery2 + " WHERE username = ?;";
+				
+				int counter = 1;
+				
+				PreparedStatement statement2 = this.connection.prepareStatement(sqlQuery2);
+				if(name != null) {
+					statement2.setString(counter, name);
+					++counter;
+				}
+				if(password != null) {
+					statement2.setString(counter, password);
+					++counter;
+				}
+				if(email != null) {
+					statement2.setString(counter, email);
+					++counter;
+				}
+				if(cgpa >= 0.0  && userType.equalsIgnoreCase("Student")) {
+					statement2.setDouble(counter, cgpa);
+					++counter;
+				}
+				
+				statement2.setString(counter, username);
+				
+				if(statement2.executeUpdate() <= 0)
+					flag = 0;
+				else
+					flag = 1;
+			}
+		
+		} catch (SQLException e) {
+			if(e instanceof SQLIntegrityConstraintViolationException == false) {
+				System.out.println("Exception thrown in the updateUser(String, String, String, String, double)"
+						+ " method of the DBHandler class");
+				e.printStackTrace();
+			}
+			else
+				flag = -5;
+		}
+		
+		this.closeConnection();
+		return flag;
+	}
+	
+	public int deleteUserById(int userId) {
+		if(this.establishConnection() == false)
+			return -1;
+		
+		int flag = 0;
+			
+		try {
+			// first check if the user exists in the system 
+			// and if yes what is is user type
+			String sqlQuery1 = "SELECT COUNT(1), usertype\r\n"
+					+ "FROM User\r\n"
+					+ "WHERE ID = ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, userId);
+			
+			ResultSet result1 = statement1.executeQuery();
+			boolean userExists = false;
+			String userType = "Admin";
+				
+			if(result1.next()) {
+				if(result1.getInt(1) >= 1) {
+					userExists = true;
+					flag = 1;
+					userType = result1.getString(2);
+				}
+			}
+			
+			// user exists and is a faculty member
+			if(userExists && userType.equalsIgnoreCase("Faculty")) {
+				flag = 2;
+
+				// check if they have uploaded a project
+				String sqlQuery2 = "SELECT COUNT(1)\r\n"
+						+ "FROM project\r\n"
+						+ "WHERE faculty_ID = ?;";
+				PreparedStatement statement2 = this.connection.prepareStatement(sqlQuery2);
+				statement2.setInt(1, userId);
+				
+				ResultSet result2 = statement2.executeQuery();
+				boolean hasAProjectUploaded = false;
+				
+				if(result2.next()) {
+					if(result2.getInt(1) > 0) {
+						hasAProjectUploaded = true;
+						flag = 2;
+					}
+					
+					// now we can delete the user
+					if(hasAProjectUploaded == false) {
+						
+						String sqlQuery3 = "DELETE FROM User WHERE ID = ?;";
+						PreparedStatement statement3 = this.connection.prepareStatement(sqlQuery3);
+						statement3.setInt(1, userId);
+				
+						if(statement3.executeUpdate() <= 0)
+							flag = -1;
+						else 
+							flag = 4;
+					}
+				}
+				else
+					flag = -1;
+			}
+			else if(userExists && userType.equalsIgnoreCase("Student")) {
+				flag = 3;
+				// check if they are in a group
+				String sqlQuery2 = "SELECT COUNT(1)\r\n"
+						+ "FROM groupT\r\n"
+						+ "WHERE leader = ? || student1 = ? || student2 = ?;";
+				PreparedStatement statement2 = this.connection.prepareStatement(sqlQuery2);
+				statement2.setInt(1, userId);
+				statement2.setInt(2, userId);
+				statement2.setInt(3, userId);
+				
+				ResultSet result2 = statement2.executeQuery();
+				boolean isInAGroup = false;
+				
+				if(result2.next()) {
+					if(result2.getInt(1) > 0) {
+						isInAGroup = true;
+						flag = 3;
+					}
+					
+					// now we can delete the user
+					if(isInAGroup == false) {
+						
+						String sqlQuery3 = "DELETE FROM User WHERE ID = ?;";
+						PreparedStatement statement3 = this.connection.prepareStatement(sqlQuery3);
+						statement3.setInt(1, userId);
+				
+						if(statement3.executeUpdate() <= 0)
+							flag = -1;
+						else 
+							flag = 4;
+					}
+				}
+				else
+					flag = -1;
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the deleteUserById(int) method of the DBHandler Class");
+			e.printStackTrace();
+			flag = -1;
+		}
+		
+		this.closeConnection();
+		return flag;
+	}
+	
+	public int deleteUserByUsername(String username) {
+		if(this.establishConnection() == false)
+			return -1;
+		
+		int flag = 0;
+			
+		try {
+			// first check if the user exists in the system 
+			// and if yes what is is user type
+			String sqlQuery1 = "SELECT COUNT(1), usertype\r\n"
+					+ "FROM User\r\n"
+					+ "WHERE username = ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setString(1, username);
+			
+			ResultSet result1 = statement1.executeQuery();
+			boolean userExists = false;
+			String userType = "Admin";
+				
+			if(result1.next()) {
+				if(result1.getInt(1) >= 1) {
+					userExists = true;
+					flag = 1;
+					userType = result1.getString(2);
+				}
+			}
+			
+			// user exists and is a faculty member
+			if(userExists && userType.equalsIgnoreCase("Faculty")) {
+				flag = 2;
+
+				// check if they have uploaded a project
+				String sqlQuery2 = "SELECT COUNT(1)\r\n"
+						+ "FROM user AS u\r\n"
+						+ "INNER JOIN project AS p\r\n"
+						+ "on u.ID = p.faculty_ID\r\n"
+						+ "WHERE u.username = ?;";
+				PreparedStatement statement2 = this.connection.prepareStatement(sqlQuery2);
+				statement2.setString(1, username);
+				
+				ResultSet result2 = statement2.executeQuery();
+				boolean hasAProjectUploaded = false;
+				
+				if(result2.next()) {
+					if(result2.getInt(1) >= 1) {
+						hasAProjectUploaded = true;
+						flag = 2;
+					}
+					
+					// now we can delete the user
+					if(hasAProjectUploaded == false) {
+						
+						String sqlQuery3 = "DELETE FROM User WHERE username = ?;";
+						PreparedStatement statement3 = this.connection.prepareStatement(sqlQuery3);
+						statement3.setString(1, username);
+				
+						if(statement3.executeUpdate() <= 0)
+							flag = -1;
+						else 
+							flag = 4;
+					}
+				}
+				else
+					flag = -1;
+			}
+			else if(userExists && userType.equalsIgnoreCase("Student")) {
+				flag = 3;
+				// check if they are in a group
+				String sqlQuery2 = "SELECT COUNT(1)\r\n"
+						+ "FROM User AS u\r\n"
+						+ "INNER JOIN groupT AS g\r\n"
+						+ "ON (u.ID = g.leader OR u.ID = g.student1 OR u.ID = g.student2)\r\n"
+						+ "WHERE u.username = ?;";
+				PreparedStatement statement2 = this.connection.prepareStatement(sqlQuery2);
+				statement2.setString(1, username);
+//				statement2.setInt(2, userId);
+//				statement2.setInt(3, userId);
+				
+				ResultSet result2 = statement2.executeQuery();
+				boolean isInAGroup = false;
+				
+				if(result2.next()) {
+					if(result2.getInt(1) >= 1) {
+						isInAGroup = true;
+						flag = 3;
+					}
+					
+					// now we can delete the user
+					if(isInAGroup == false) {
+						
+						String sqlQuery3 = "DELETE FROM User WHERE username = ?;";
+						PreparedStatement statement3 = this.connection.prepareStatement(sqlQuery3);
+						statement3.setString(1, username);
+				
+						if(statement3.executeUpdate() <= 0)
+							flag = -1;
+						else 
+							flag = 4;
+					}
+				}
+				else
+					flag = -1;
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the deleteUserById(int) method of the DBHandler Class");
+			e.printStackTrace();
+			flag = -1;
+		}
+		
+		this.closeConnection();
+		return flag;
+	}
 	
 }

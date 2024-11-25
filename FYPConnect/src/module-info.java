@@ -7,4 +7,6 @@ module FYPConnect {
 	
 	opens application to javafx.graphics, javafx.fxml;
 	opens application.controller to javafx.graphics, javafx.fxml;
+	opens application.datamodel to javafx.base;
+	opens application.controller.adminScreens to javafx.graphics, javafx.fxml;
 }
