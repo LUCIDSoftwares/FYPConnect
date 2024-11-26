@@ -60,6 +60,8 @@ public class FacultyScreenController {
 	public TextField faculty_username;
 	
 
+	
+
 	// The initialize method is automatically called after the FXML file is loaded
 	@FXML
 	public void initialize() {

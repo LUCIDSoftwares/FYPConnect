@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <!-- <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" /> -->
 
@@ -27,7 +28,8 @@
  -->                        <Label graphicTextGap="10.0" layoutX="44.0" layoutY="36.0" text="Welcome Faculty" textFill="#fff9f9">
                            <font>
                               <Font name="Century Gothic Italic" size="14.0" />
-                           </font></Label>
+                           </font>
+                        </Label>
                         <Button fx:id="DashboardButton" layoutX="5.0" layoutY="155.0" mnemonicParsing="false" onAction="#Dashboard1" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Dashboard" />
                         <Button fx:id="UploadprojectsButton" layoutX="5.0" layoutY="201.0" mnemonicParsing="false" onAction="#handleUploadProject" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Upload Projects" />
                         <Button fx:id="SettimelineButton" layoutX="4.0" layoutY="373.0" mnemonicParsing="false" onAction="#SetTimeline" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Set Timeline" />
@@ -35,9 +37,9 @@
                         <Button fx:id="UpdateResourceButton" layoutX="5.0" layoutY="245.0" mnemonicParsing="false" onAction="#UploadResources" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Upload Resources" />
                     <!--     <FontAwesomeIconView fill="#ebd9d9" glyphName="DASHBOARD" layoutX="46.0" layoutY="172.0" />
                         <FontAwesomeIconView fill="#ebd9d9" glyphName="PLUS_CIRCLE" layoutX="47.0" layoutY="218.0" />
-                              <FontAwesomeIconView fill="#ebd9d9" glyphName="PLUS_CIRCLE" layoutX="42.0" layoutY="263.0" text="" />
-                              <FontAwesomeIconView fill="#ebd9d9" glyphName="SET" layoutX="47.0" layoutY="318.0" />
-                              <FontAwesomeIconView fill="#ebd9d9" layoutX="46.0" layoutY="372.0" /> -->
+                                    <FontAwesomeIconView fill="#ebd9d9" glyphName="PLUS_CIRCLE" layoutX="42.0" layoutY="263.0" text="" />
+                                    <FontAwesomeIconView fill="#ebd9d9" glyphName="SET" layoutX="47.0" layoutY="318.0" />
+                                    <FontAwesomeIconView fill="#ebd9d9" layoutX="46.0" layoutY="372.0" /> -->
                         <Line endX="100.0" layoutX="103.0" layoutY="120.0" startX="-100.0" />
                         <Button fx:id="MentorshipreqButton" layoutX="3.0" layoutY="413.0" mnemonicParsing="false" onAction="#showMentorship" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Mentorship Request" />
                         <Button fx:id="SetDeliverableButton" layoutX="4.0" layoutY="290.0" mnemonicParsing="false" onAction="#Setdeliverable1" prefWidth="200.0" styleClass="nav-btn" stylesheets="@../../Design/faculty.css" text="Set Deliverables" />
@@ -60,6 +62,13 @@
                </children>
             </AnchorPane>
          </top>
+         <center>
+            <Text fx:id="headingtext" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Faculty Dashboard" wrappingWidth="369.13671875" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="Century Gothic Bold Italic" size="24.0" />
+               </font>
+            </Text>
+         </center>
       </BorderPane>
    </children>
 </AnchorPane>
