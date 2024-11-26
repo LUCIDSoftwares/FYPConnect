@@ -1,0 +1,74 @@
+title Join Groups Controller Flow
+
+participant "UserSession" as US
+participant "joinGroupsController" as JG
+participant "PersistanceHandler" as DB
+
+
+JG -> US : getCurrentUser()
+activate US
+US --> JG : User (Current User)
+deactivate US
+
+JG -> DB : isGroupLeader(username)
+activate DB
+DB --> JG : boolean (isLeader)
+deactivate DB
+
+alt User is a leader
+    JG -> DB : getGroupRequests(username)
+    activate DB
+    DB --> JG : String[] (requests)
+    deactivate DB
+    
+    JG -> DB : getStudent(requests[0])
+    activate DB
+    DB --> JG : User (requester)
+    deactivate DB
+
+    JG -> DB : acceptRequest(groupName, selectedperson)
+    activate DB
+    DB --> JG : boolean (isAccepted)
+    deactivate DB
+
+else User is not a leader
+    JG -> DB : getGroupInvitations(username)
+    activate DB
+    DB --> JG : String[] (invitations)
+    deactivate DB
+    
+    JG -> DB : getGroupLeader(invitation)
+    activate DB
+    DB --> JG : String (leader)
+    deactivate DB
+
+    JG -> DB : acceptInvite(groupName, username)
+    activate DB
+    DB --> JG : boolean (result)
+    deactivate DB
+end
+
+JG -> DB : getAvailableGroups()
+activate DB
+DB --> JG : String[] (groups)
+deactivate DB
+
+JG -> DB : sendRequest(groupName, username)
+activate DB
+DB --> JG : boolean (result)
+deactivate DB
+
+JG -> DB : declineInvite(groupName, username)
+activate DB
+DB --> JG : boolean (result)
+deactivate DB
+
+JG -> DB : declineRequest(groupName, selectedperson)
+activate DB
+DB --> JG : boolean (isDeclined)
+deactivate DB
+
+JG -> DB : getGroupName(username)
+activate DB
+DB --> JG : String (groupName)
+deactivate DB

@@ -1,0 +1,37 @@
+title Delete Group Sequence Diagram
+
+participant "DeleteGroupController" as DGC
+participant "UserSession" as US
+participant "PersistanceHandler" as PH
+
+DGC->US: getCurrentUser()
+activate US
+US-->DGC: return User
+deactivate US
+
+DGC->PH: createPersistanceHandler("DBHandler")
+activate PH
+PH-->DGC: return DBHandler instance
+deactivate PH
+
+DGC->PH: getGroupName(currentUser.username)
+activate PH
+PH-->DGC: return groupName
+deactivate PH
+
+DGC->PH: getGroupMembers(groupName)
+activate PH
+PH-->DGC: return groupMembers
+deactivate PH
+
+alt groupMembers > 1
+    DGC->DGC: displayError("Cannot delete group. Multiple members exist.")
+    DGC->DGC: disable(deleteGroupButton)
+else groupMembers == 1
+    DGC->PH: deleteGroup(groupName)
+    activate PH
+    PH-->DGC: return success
+    deactivate PH
+
+    DGC->DGC: displayMessage("Group Deleted")
+end
