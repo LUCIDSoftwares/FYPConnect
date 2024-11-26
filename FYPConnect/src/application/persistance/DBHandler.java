@@ -147,7 +147,7 @@ public class DBHandler extends PersistanceHandler{
 		        PreparedStatement statement = this.connection.prepareStatement(query);
 		        statement.setString(1, deadline);
 		        statement.setString(2, description);
-		        statement.setString(3, docLink.isEmpty() ? null : docLink); // Allow null for empty links
+		        statement.setString(3, docLink == null ? null : docLink); // Allow null for empty links
 		        statement.setInt(4, facultyID);
 		        statement.executeUpdate();
 		    } catch (SQLException e) {
