@@ -14,11 +14,12 @@
     <TextField fx:id="titleField" editable="true" layoutX="200.0" layoutY="100.0" prefWidth="400.0" promptText="Project Title" />
 
     <!-- Project Description Text Area -->
-    <TextArea fx:id="descriptionField" editable="true" layoutX="200.0" layoutY="160.0" prefHeight="100.0" prefWidth="400.0" promptText="Project Description" />
+    <TextArea fx:id="descriptionField" editable="true" layoutX="100.0" layoutY="146.0" prefHeight="150.0" prefWidth="600.0" promptText="Project Description" />
 
     <!-- Document Link Text Field -->
-    <TextField fx:id="docLinkField" layoutX="200.0" layoutY="280.0" prefWidth="400.0" promptText="Document Link (optional)" />
+    <TextField fx:id="docLinkField" editable="false" layoutX="100.0" layoutY="310.0" prefHeight="26.0" prefWidth="600.0" promptText="Document Link" />
 
     <!-- Submit Button -->
-    <Button layoutX="350.0" layoutY="340.0" onAction="#handleSubmit" prefWidth="100.0" style="-fx-background-color: #28a745; -fx-text-fill: white;" text="Submit" />
+    <Button layoutX="346.0" layoutY="430.0" onAction="#handleSubmit" prefWidth="100.0" style="-fx-background-color: #28a745; -fx-text-fill: white;" text="Submit" />
+   <Button fx:id="uploadFileButton" layoutX="536.0" layoutY="357.0" onAction="#uploadFile" prefHeight="26.0" prefWidth="164.0" style="-fx-background-color: #28a745; -fx-text-fill: white;" text="Upload Project Document" />
 </AnchorPane>
