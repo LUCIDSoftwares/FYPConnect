@@ -173,6 +173,11 @@ public class FacultyScreenController {
 	    loadPage("setTimeline");
 
 	}
+	
+	@FXML
+	public void showMentorship(ActionEvent event) {
+		loadPage("handleMentorshipScreen");
+	}
 
 	private void loadPage(String resource) {
 	    Parent root = null;

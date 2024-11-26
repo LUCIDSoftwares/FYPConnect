@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 
 import application.datamodel.Deliverable;
-
+import application.datamodel.Mentorship_Request;
 import application.datamodel.Project;
 
 import application.datamodel.Resource;
@@ -102,4 +102,14 @@ public abstract class PersistanceHandler {
 	public abstract Project getProjectByGroupId(int groupId);
 	
 	public abstract boolean hasGroupBeenAssignedProject(int groupId);
+
+	public abstract ArrayList<Mentorship_Request> getMentorshipRequestAgaisnt(int id);
+	
+	public abstract boolean acceptMentorshipRequest(int mentorshipID);
+	
+	public abstract boolean declineMentorshipRequest(int mentorshipID);
+	
+	public abstract ArrayList<Mentorship_Request> getAllAcceptedMentorshipRequest(int id);
+	
+	public abstract ArrayList<Mentorship_Request> getAllDeclinedMentorshipRequest(int id);
 }

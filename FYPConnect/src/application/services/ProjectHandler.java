@@ -2,6 +2,7 @@ package application.services;
 
 import java.util.ArrayList;
 
+import application.datamodel.Mentorship_Request;
 import application.datamodel.Project;
 import application.datamodel.User;
 import application.persistance.ConcretePersistanceFactory;
@@ -33,6 +34,31 @@ public class ProjectHandler {
 		int groupId = this.dbHandler.getGroupId(user.getId());
 		
 		this.dbHandler.createMentorshipRequest(projectId, groupId);
+	}
+	
+	public ArrayList<Mentorship_Request> getAllPendingMentorshipRequest() {
+		
+		return this.dbHandler.getMentorshipRequestAgaisnt(UserSession.getInstance().getCurrentUser().getId());
+	}
+	
+	public ArrayList<Mentorship_Request> getAllAcceptedMentorshipRequest() {
+		
+		return this.dbHandler.getAllAcceptedMentorshipRequest(UserSession.getInstance().getCurrentUser().getId());
+	}
+	
+	public ArrayList<Mentorship_Request> getAllDeclinedMentorshipRequest() {
+		
+		return this.dbHandler.getAllDeclinedMentorshipRequest(UserSession.getInstance().getCurrentUser().getId());
+	}
+	
+	public boolean acceptMentorshipRequest(int mentorshipId) {
+		
+		return this.dbHandler.acceptMentorshipRequest(mentorshipId);
+	}
+	
+	public boolean declineMentorshipRequest(int mentorshipId) {
+		
+		return this.dbHandler.declineMentorshipRequest(mentorshipId);
 	}
 	
 	public ArrayList<Project> getAllProjectsWithMentorshipRequest(String projectTitle) {

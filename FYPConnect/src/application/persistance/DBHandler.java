@@ -13,6 +13,7 @@ import java.sql.Statement;
 import application.datamodel.Admin;
 import application.datamodel.Deliverable;
 import application.datamodel.Faculty;
+import application.datamodel.Mentorship_Request;
 import application.datamodel.Project;
 import application.datamodel.Resource;
 import application.datamodel.Student;
@@ -2470,5 +2471,231 @@ public class DBHandler extends PersistanceHandler{
 		return flag;
 	}
 	
+	public ArrayList<Mentorship_Request> getMentorshipRequestAgaisnt(int id) {
+		if(this.establishConnection() == false)
+			return null;
+		
+		ArrayList<Mentorship_Request> mentorship_Request = null;
+
+		try {
+		
+			String sqlQeury1 = "SELECT mR.ID, mR.GroupID, mR.Project_ID, mR.Status, p.title AS 'projectTitle', g.name AS 'groupName', g.leader AS 'leaderId',g.student1 AS 'member1Id', g.student2 AS 'member2Id'    \r\n"
+					+ "FROM Ment_Req AS mR\r\n"
+					+ "INNER JOIN project AS p\r\n"
+					+ "ON mR.Project_ID = p.ID\r\n"
+					+ "INNER JOIN groupT AS g\r\n"
+					+ "ON mR.GroupID = g.ID\r\n"
+					+ "INNER JOIN User AS u\r\n"
+					+ "ON p.Faculty_ID = u.ID\r\n"
+					+ "WHERE mr.Status = 'pending'\r\n"
+					+ "AND u.ID = ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQeury1);
+			statement1.setInt(1, id);
+			
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next()) {
+				mentorship_Request = new ArrayList<Mentorship_Request>();
+				Mentorship_Request temp = new Mentorship_Request( result1.getInt("ID"),
+						result1.getInt("GroupID"),
+						result1.getInt("Project_ID"),
+						result1.getString("Status"),
+						result1.getString("projectTitle"),
+						result1.getString("groupName"),
+						result1.getInt("leaderId"),
+						result1.getInt("member1Id"),
+						result1.getInt("member2Id"));
+				mentorship_Request.add(temp);
+				
+				while(result1.next()) {
+					temp = new Mentorship_Request( result1.getInt("ID"),
+							result1.getInt("GroupID"),
+							result1.getInt("Project_ID"),
+							result1.getString("Status"),
+							result1.getString("projectTitle"),
+							result1.getString("groupName"),
+							result1.getInt("leaderId"),
+							result1.getInt("member1Id"),
+							result1.getInt("member2Id"));
+					mentorship_Request.add(temp);					
+				}
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getMentorshipRequestAgaisnt(int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return mentorship_Request;
+	}
+
+	public ArrayList<Mentorship_Request> getAllAcceptedMentorshipRequest(int id) {
+		if(this.establishConnection() == false)
+			return null;
+		
+		ArrayList<Mentorship_Request> mentorship_Request = null;
+
+		try {
+		
+			String sqlQeury1 = "SELECT mR.ID, mR.GroupID, mR.Project_ID, mR.Status, p.title AS 'projectTitle', g.name AS 'groupName', g.leader AS 'leaderId',g.student1 AS 'member1Id', g.student2 AS 'member2Id'    \r\n"
+					+ "FROM Ment_Req AS mR\r\n"
+					+ "INNER JOIN project AS p\r\n"
+					+ "ON mR.Project_ID = p.ID\r\n"
+					+ "INNER JOIN groupT AS g\r\n"
+					+ "ON mR.GroupID = g.ID\r\n"
+					+ "INNER JOIN User AS u\r\n"
+					+ "ON p.Faculty_ID = u.ID\r\n"
+					+ "WHERE mr.Status = 'accepted'\r\n"
+					+ "AND u.ID = ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQeury1);
+			statement1.setInt(1, id);
+			
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next()) {
+				mentorship_Request = new ArrayList<Mentorship_Request>();
+				Mentorship_Request temp = new Mentorship_Request( result1.getInt("ID"),
+						result1.getInt("GroupID"),
+						result1.getInt("Project_ID"),
+						result1.getString("Status"),
+						result1.getString("projectTitle"),
+						result1.getString("groupName"),
+						result1.getInt("leaderId"),
+						result1.getInt("member1Id"),
+						result1.getInt("member2Id"));
+				mentorship_Request.add(temp);
+				
+				while(result1.next()) {
+					temp = new Mentorship_Request( result1.getInt("ID"),
+							result1.getInt("GroupID"),
+							result1.getInt("Project_ID"),
+							result1.getString("Status"),
+							result1.getString("projectTitle"),
+							result1.getString("groupName"),
+							result1.getInt("leaderId"),
+							result1.getInt("member1Id"),
+							result1.getInt("member2Id"));
+					mentorship_Request.add(temp);					
+				}
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getAllAcceptedMentorshipRequestAgaisnt(int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return mentorship_Request;		
+	}
+	
+	public ArrayList<Mentorship_Request> getAllDeclinedMentorshipRequest(int id) {
+		if(this.establishConnection() == false)
+			return null;
+		
+		ArrayList<Mentorship_Request> mentorship_Request = null;
+
+		try {
+		
+			String sqlQeury1 = "SELECT mR.ID, mR.GroupID, mR.Project_ID, mR.Status, p.title AS 'projectTitle', g.name AS 'groupName', g.leader AS 'leaderId',g.student1 AS 'member1Id', g.student2 AS 'member2Id'    \r\n"
+					+ "FROM Ment_Req AS mR\r\n"
+					+ "INNER JOIN project AS p\r\n"
+					+ "ON mR.Project_ID = p.ID\r\n"
+					+ "INNER JOIN groupT AS g\r\n"
+					+ "ON mR.GroupID = g.ID\r\n"
+					+ "INNER JOIN User AS u\r\n"
+					+ "ON p.Faculty_ID = u.ID\r\n"
+					+ "WHERE mr.Status = 'declined'\r\n"
+					+ "AND u.ID = ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQeury1);
+			statement1.setInt(1, id);
+			
+			ResultSet result1 = statement1.executeQuery();
+			if(result1.next()) {
+				mentorship_Request = new ArrayList<Mentorship_Request>();
+				Mentorship_Request temp = new Mentorship_Request( result1.getInt("ID"),
+						result1.getInt("GroupID"),
+						result1.getInt("Project_ID"),
+						result1.getString("Status"),
+						result1.getString("projectTitle"),
+						result1.getString("groupName"),
+						result1.getInt("leaderId"),
+						result1.getInt("member1Id"),
+						result1.getInt("member2Id"));
+				mentorship_Request.add(temp);
+				
+				while(result1.next()) {
+					temp = new Mentorship_Request( result1.getInt("ID"),
+							result1.getInt("GroupID"),
+							result1.getInt("Project_ID"),
+							result1.getString("Status"),
+							result1.getString("projectTitle"),
+							result1.getString("groupName"),
+							result1.getInt("leaderId"),
+							result1.getInt("member1Id"),
+							result1.getInt("member2Id"));
+					mentorship_Request.add(temp);					
+				}
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the getAllDeclinedMentorshipRequestAgaisnt(int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return mentorship_Request;		
+	}
+	
+	
+	public boolean acceptMentorshipRequest(int mentorshipID) {
+		if(this.establishConnection() == false)
+			return false;
+		
+		boolean requestAccepted = false;
+
+		try {
+			
+			String sqlQuery1 = "UPDATE Ment_Req\r\n"
+					+ "SET Status = 'accepted'\r\n"
+					+ "WHERE ID = ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, mentorshipID);
+			
+			if(statement1.executeUpdate() > 0)
+				requestAccepted = true;
+		
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the acceptMentorshipRequest(int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return requestAccepted;
+	}
+	
+	public boolean declineMentorshipRequest(int mentorshipID) {
+		if(this.establishConnection() == false)
+			return false;
+		
+		boolean requestDeclined = false;
+
+		try {
+			
+			String sqlQuery1 = "UPDATE Ment_Req\r\n"
+					+ "SET Status = 'declined'\r\n"
+					+ "WHERE ID = ?;";
+			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+			statement1.setInt(1, mentorshipID);
+			
+			if(statement1.executeUpdate() > 0)
+				requestDeclined = true;
+		
+		} catch (SQLException e) {
+			System.out.println("Exception thrown in the declineMentorshipRequest(int) method of the DBHandler Class");
+			e.printStackTrace();
+		}
+		
+		this.closeConnection();
+		return requestDeclined;		
+	}
 	
 }
