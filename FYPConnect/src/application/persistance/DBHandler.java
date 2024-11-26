@@ -10,7 +10,10 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 
 import application.datamodel.Admin;
+import application.datamodel.Deliverable;
 import application.datamodel.Faculty;
+import application.datamodel.Project;
+import application.datamodel.Resource;
 import application.datamodel.Student;
 import application.datamodel.User;
 import application.services.*;
