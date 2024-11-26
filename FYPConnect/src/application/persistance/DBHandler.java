@@ -2647,30 +2647,48 @@ public class DBHandler extends PersistanceHandler{
 	
 	
 	public boolean acceptMentorshipRequest(int mentorshipID) {
-		if(this.establishConnection() == false)
-			return false;
-		
-		boolean requestAccepted = false;
+	    if (this.establishConnection() == false)
+	        return false;
 
-		try {
-			
-			String sqlQuery1 = "UPDATE Ment_Req\r\n"
-					+ "SET Status = 'accepted'\r\n"
-					+ "WHERE ID = ?;";
-			PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
-			statement1.setInt(1, mentorshipID);
-			
-			if(statement1.executeUpdate() > 0)
-				requestAccepted = true;
-		
-		} catch (SQLException e) {
-			System.out.println("Exception thrown in the acceptMentorshipRequest(int) method of the DBHandler Class");
-			e.printStackTrace();
-		}
-		
-		this.closeConnection();
-		return requestAccepted;
+	    boolean requestAccepted = false;
+
+	    try {
+	        // Step 1: Update the Mentorship Request Status
+	        String sqlQuery1 = "UPDATE Ment_Req SET Status = 'accepted' WHERE ID = ?;";
+	        PreparedStatement statement1 = this.connection.prepareStatement(sqlQuery1);
+	        statement1.setInt(1, mentorshipID);
+
+	        if (statement1.executeUpdate() > 0) {
+	            requestAccepted = true;
+
+	            // Step 2: Fetch GroupID and Project_ID from the Ment_Req table
+	            String fetchDetailsQuery = "SELECT GroupID, Project_ID FROM Ment_Req WHERE ID = ?;";
+	            PreparedStatement fetchDetailsStmt = this.connection.prepareStatement(fetchDetailsQuery);
+	            fetchDetailsStmt.setInt(1, mentorshipID);
+	            ResultSet resultSet = fetchDetailsStmt.executeQuery();
+
+	            if (resultSet.next()) {
+	                int groupID = resultSet.getInt("GroupID");
+	                int projectID = resultSet.getInt("Project_ID");
+
+	                // Step 3: Update the groupT table with the Project_ID
+	                String updateGroupQuery = "UPDATE groupT SET projectID = ? WHERE ID = ?;";
+	                PreparedStatement updateGroupStmt = this.connection.prepareStatement(updateGroupQuery);
+	                updateGroupStmt.setInt(1, projectID);
+	                updateGroupStmt.setInt(2, groupID);
+
+	                updateGroupStmt.executeUpdate();
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Exception thrown in the acceptMentorshipRequest(int) method of the DBHandler Class");
+	        e.printStackTrace();
+	    }
+
+	    this.closeConnection();
+	    return requestAccepted;
 	}
+
 	
 	public boolean declineMentorshipRequest(int mentorshipID) {
 		if(this.establishConnection() == false)

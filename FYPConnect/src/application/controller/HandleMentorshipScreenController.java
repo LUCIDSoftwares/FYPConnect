@@ -85,7 +85,7 @@ public class HandleMentorshipScreenController {
     	
     	this.textArea.clear();
     	this.requestTableView.getItems().clear();
-    	
+    	this.requestTableView.refresh();
     	this.list = FXCollections.observableArrayList(mentArray);  	
     	requestTableView.setItems(list);
     }
@@ -93,12 +93,18 @@ public class HandleMentorshipScreenController {
     @FXML
     public void displayMentorshipRequests(ActionEvent event) {
     	ArrayList<Mentorship_Request> mentArray = null;
+    	this.requestTableView.getItems().clear();
     	if(this.acceptedRButton.isSelected())
+    	{
     		mentArray = this.projectHandler.getAllAcceptedMentorshipRequest();
+    	}
     	else if(this.declinedRButton.isSelected())
+    	{
     		mentArray = this.projectHandler.getAllDeclinedMentorshipRequest();
-    	else
+    	}
+    	else {
     		mentArray = this.projectHandler.getAllPendingMentorshipRequest();
+    	}
     	
     	this.displayPassedMentorshipRequests(mentArray);
     }
