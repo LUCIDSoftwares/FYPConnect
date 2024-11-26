@@ -111,3 +111,14 @@ create table Feedback(
     );
     
     # drop table Feedback
+
+create table Resource(
+	ID int primary key auto_increment,
+	title varchar(40) not null,
+    description varchar(80) not null,
+    uploader_username varchar(25) not null,
+    filePath varchar(80) not null,
+    FOREIGN KEY (uploader_username) REFERENCES User(username)
+);
+
+    # drop table Resource 
