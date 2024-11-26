@@ -1,6 +1,7 @@
 package application.services;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 //import java.net.URL;
@@ -13,7 +14,10 @@ import java.util.Date;
 import application.datamodel.Resource;
 import application.persistance.ConcretePersistanceFactory;
 import application.persistance.PersistanceHandler;
+import application.session.UserSession;
 import javafx.concurrent.Task;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 // functionality related to uploading and downloading resources
 public class ResourceHandler {
@@ -40,16 +44,14 @@ public class ResourceHandler {
 	
 	public String downloadResource(String fileTitle, String filePath) {
 		//String fileTitle = "My Thesis";
-		//String filePath = "C:/Users/HP/Downloads/22I-0789_AdmitCard-1.pdf/";
 
 		// extract the extension from the give file path
 		String ext = filePath.substring(filePath.lastIndexOf("."), filePath.length());
 		File originalFile = new File(filePath);
 		
-		//System.out.println("C:/Users/HP/Downloads/22I-0789_AdmitCard-1.pdf/");
 		//File newFile = new File("C:/Users/HP/Downloads/Check2.pdf");
 		
-		// use date to always assign a unique name to a file that is to be downloaded
+			// use date to always assign a unique name to a file that is to be downloaded
 		// downloaded files will appear in the downloads folder with the 
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("ddMMyy-hhmmss.SSS");
@@ -77,7 +79,78 @@ public class ResourceHandler {
 			System.out.println("Exception thrown in the downloadResource(String) method of the Resource Handler Class ");
 			return null;
 		}
+	}
+	
+	public boolean handleSubmit(String title, String description, File selectedFile) {
 		
+        // generate a unique filename using a time stamp
+        String originalFileName = selectedFile.getName();
+        // extract the extension
+        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        // extract the file name excluding the extension
+        originalFileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
+        originalFileName = originalFileName.replaceAll("\\s","");
+        // get time stamp in the given format
+        String timestamp = new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date());
+        String newFileName = originalFileName + timestamp + extension;
+
+		// Define the path to copy the file to
+        String resourcesPath = "/resources";
+        File resourcesDir = new File(resourcesPath );
+        if (!resourcesDir.exists()) {
+            resourcesDir.mkdir(); 		// Create resources folder if it doesn't exist
+        }
+        File destinationFile = new File(resourcesDir, newFileName);
+        
+        String uploaderUsername = UserSession.getInstance().getCurrentUser().getUsername();
+        
+        try {
+            // copy the file to the resources folder
+            java.nio.file.Files.copy(selectedFile.toPath(), destinationFile.toPath());
+            System.out.println("File copied successfully to: " + destinationFile.getAbsolutePath());
+
+            // save the resource details to the database through the PersistenceHandler
+            String filePath = resourcesPath + "/" + newFileName;
+            //Date currentTimestamp = new Date();
+            
+            //boolean isSaved = dbHandler.saveSubmission(delId, this.groupId, currentTimestamp, fileLink);
+            boolean isUploaded = dbHandler.saveResource(title, description, filePath, uploaderUsername);
+            
+            if (isUploaded) {
+            	
+            	return true;
+            	
+//                Alert alert = new Alert(AlertType.INFORMATION);
+//                alert.setTitle("Submission Successful");
+//                alert.setHeaderText(null);
+//                alert.setContentText("File uploaded and resource recorded successfully.");
+//                alert.showAndWait();
+            } else {
+            	
+            	return false;
+            	
+//                Alert alert = new Alert(AlertType.ERROR);
+//                alert.setTitle("Database Error");
+//                alert.setHeaderText(null);
+//                alert.setContentText("Failed to save resource details to the database.");
+//                alert.showAndWait();
+            }
+
+        } catch (IOException e) {	
+        	System.out.println("Exception in resource handler bara wala code");
+        	return false;
+//        	e.printStackTrace();
+//            Alert alert = new Alert(AlertType.ERROR);
+//            alert.setTitle("File Upload Error");
+//            alert.setHeaderText(null);
+//            alert.setContentText("Failed to copy the file. Please try again.");
+//            alert.showAndWait();
+            
+        }
+        //return false;
+	}
+	
+}
 //		String ext = filePath.substring(filePath.lastIndexOf("."), filePath.length());
 //		File originalFile = new File(filePath);
 //		String newFilePath = "Downloads//downloadedFile" + ext;
@@ -95,7 +168,7 @@ public class ResourceHandler {
 //			
 //		}
 		//return null;
-	}
+//	}
 	
 	
 //	String url;
@@ -147,4 +220,4 @@ public class ResourceHandler {
 //	public void succeeded() {
 //		System.out.println("Download Completed");
 //	}
-}
+//}

@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import application.persistance.DBHandler;
+import application.services.ResourceHandler;
 import application.session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -107,64 +108,85 @@ public class UploadResourcesController {
             alert.showAndWait();
             return;
         }
+
+        
+        /////////// agar issue ho tou ye remove kardo
+        ResourceHandler resourceHandler = new ResourceHandler();
+        boolean isUploaded = resourceHandler.handleSubmit(title, description, selectedFile);
+        
+        if (isUploaded) {
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Submission Successful");
+            alert.setHeaderText(null);
+            alert.setContentText("File uploaded and resource recorded successfully.");
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Database Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Failed to save resource details to the database.");
+            alert.showAndWait();
+        }
+        ///////////
+        
         
         // once merged do all of this in the ResourceHandler Class
         // pass title, description, and selected file
         
         // generate a unique filename using a time stamp
-        String originalFileName = selectedFile.getName();
-        // extract the extension
-        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        // extract the file name excluding the extension
-        originalFileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
-        originalFileName = originalFileName.replaceAll("\\s","");
-        // get time stamp in the given format
-        String timestamp = new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date());
-        String newFileName = originalFileName + timestamp + extension;
-
-		// Define the path to copy the file to
-        String resourcesPath = "/resources";
-        File resourcesDir = new File(resourcesPath );
-        if (!resourcesDir.exists()) {
-            resourcesDir.mkdir(); 		// Create resources folder if it doesn't exist
-        }
-        File destinationFile = new File(resourcesDir, newFileName);
-        
-        
-        try {
-            // copy the file to the resources folder
-            java.nio.file.Files.copy(selectedFile.toPath(), destinationFile.toPath());
-            System.out.println("File copied successfully to: " + destinationFile.getAbsolutePath());
-
-            // save the resource details to the database through the PersistenceHandler
-            String filePath = resourcesPath + "/" + newFileName;
-            //Date currentTimestamp = new Date();
-            
-            //boolean isSaved = dbHandler.saveSubmission(delId, this.groupId, currentTimestamp, fileLink);
-            boolean isUploaded = dbHandler.saveResource(title, description, filePath, uploaderUsername);
-            
-            if (isUploaded) {
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Submission Successful");
-                alert.setHeaderText(null);
-                alert.setContentText("File uploaded and resource recorded successfully.");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Database Error");
-                alert.setHeaderText(null);
-                alert.setContentText("Failed to save resource details to the database.");
-                alert.showAndWait();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(AlertType.ERROR);
-            alert.setTitle("File Upload Error");
-            alert.setHeaderText(null);
-            alert.setContentText("Failed to copy the file. Please try again.");
-            alert.showAndWait();
-        }
+//        String originalFileName = selectedFile.getName();
+//        // extract the extension
+//        String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+//        // extract the file name excluding the extension
+//        originalFileName = originalFileName.substring(0, originalFileName.lastIndexOf("."));
+//        originalFileName = originalFileName.replaceAll("\\s","");
+//        // get time stamp in the given format
+//        String timestamp = new SimpleDateFormat("ddMMyyyyHHmmss").format(new Date());
+//        String newFileName = originalFileName + timestamp + extension;
+//
+//		// Define the path to copy the file to
+//        String resourcesPath = "/resources";
+//        File resourcesDir = new File(resourcesPath );
+//        if (!resourcesDir.exists()) {
+//            resourcesDir.mkdir(); 		// Create resources folder if it doesn't exist
+//        }
+//        File destinationFile = new File(resourcesDir, newFileName);
+//        
+//        
+//        try {
+//            // copy the file to the resources folder
+//            java.nio.file.Files.copy(selectedFile.toPath(), destinationFile.toPath());
+//            System.out.println("File copied successfully to: " + destinationFile.getAbsolutePath());
+//
+//            // save the resource details to the database through the PersistenceHandler
+//            String filePath = resourcesPath + "/" + newFileName;
+//            //Date currentTimestamp = new Date();
+//            
+//            //boolean isSaved = dbHandler.saveSubmission(delId, this.groupId, currentTimestamp, fileLink);
+//            boolean isUploaded = dbHandler.saveResource(title, description, filePath, uploaderUsername);
+//            
+//            if (isUploaded) {
+//                Alert alert = new Alert(AlertType.INFORMATION);
+//                alert.setTitle("Submission Successful");
+//                alert.setHeaderText(null);
+//                alert.setContentText("File uploaded and resource recorded successfully.");
+//                alert.showAndWait();
+//            } else {
+//                Alert alert = new Alert(AlertType.ERROR);
+//                alert.setTitle("Database Error");
+//                alert.setHeaderText(null);
+//                alert.setContentText("Failed to save resource details to the database.");
+//                alert.showAndWait();
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Alert alert = new Alert(AlertType.ERROR);
+//            alert.setTitle("File Upload Error");
+//            alert.setHeaderText(null);
+//            alert.setContentText("Failed to copy the file. Please try again.");
+//            alert.showAndWait();
+//        }
 
 //        // Save resource to the database
 //        boolean isUploaded = dbHandler.saveResource(title, description, filePath, uploaderUsername);

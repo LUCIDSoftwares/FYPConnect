@@ -112,4 +112,6 @@ public abstract class PersistanceHandler {
 	public abstract ArrayList<Mentorship_Request> getAllAcceptedMentorshipRequest(int id);
 	
 	public abstract ArrayList<Mentorship_Request> getAllDeclinedMentorshipRequest(int id);
+
+	public abstract boolean saveResource(String title, String description, String filePath, String uploaderUsername);
 }
