@@ -146,6 +146,8 @@ public class FacultyScreenController {
 	@FXML
 	public void SetTimeline(ActionEvent me) {
 		System.out.println("Set Timeline Button");
+	    loadPage("setTimeline");
+
 	}
 
 	private void loadPage(String resource) {

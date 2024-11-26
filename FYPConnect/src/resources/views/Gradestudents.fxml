@@ -21,7 +21,7 @@
         <ComboBox fx:id="groupNameComboBox" layoutX="189.0" layoutY="116.0" prefWidth="250.0" />
 
         <!-- Fetch Submission Details Button -->
-        <Button fx:id="fetchDetailsButton" layoutX="460.0" layoutY="115.0" prefWidth="120.0" text="Fetch Details" onAction="#fetchSubmissionDetails" />
+        <Button fx:id="fetchDetailsButton" layoutX="462.0" layoutY="116.0" onAction="#fetchSubmissionDetails" prefWidth="120.0" text="Fetch Details" />
 
         <!-- Submission Content Link -->
         <Label layoutX="20.0" layoutY="170.0" text="Submission Content Link:" />
@@ -40,6 +40,6 @@
         <TextArea fx:id="remarksTextArea" layoutX="150.0" layoutY="340.0" prefHeight="100.0" prefWidth="350.0" />
 
         <!-- Submit Button -->
-        <Button fx:id="submitButton" layoutX="150.0" layoutY="460.0" text="Submit" onAction="#onSubmit" />
+        <Button fx:id="submitButton" layoutX="150.0" layoutY="460.0" onAction="#onSubmit" text="Submit" />
     </children>
 </AnchorPane>
