@@ -78,7 +78,7 @@ public class Mentorship_Request {
 	public void setMember1Id(int member1Username) {
 		this.member1Id= member1Username;
 	}
-	public int getMember2Username() {
+	public int getMember2Id() {
 		return member2Id;
 	}
 	public void setMember2Id(int member2Username) {
