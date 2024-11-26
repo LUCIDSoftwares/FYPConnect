@@ -58,7 +58,7 @@
                         <URL value="@../../Design/faculty.css" />
                      </stylesheets>
                   </Button>
-                  <TextField fx:id="faculty_username" layoutX="765.0" layoutY="8.0" prefHeight="25.0" prefWidth="238.0" />
+                  <TextField fx:id="faculty_username" editable="false" layoutX="765.0" layoutY="8.0" prefHeight="25.0" prefWidth="238.0" />
                </children>
             </AnchorPane>
          </top>
