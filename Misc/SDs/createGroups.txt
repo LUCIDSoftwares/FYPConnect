@@ -1,0 +1,65 @@
+title Create Group Sequence Diagram
+
+participant "CreateGroupsController" as G
+participant "DBHandler" as H
+database "FYPC DB" as DB #yellow
+
+participant "UserSession" as S
+
+G->S: getCurrentUser()
+activate S
+S-->G: return User (current user)
+deactivate S
+
+G->H: getStudent(student1)
+activate H
+H->DB: SELECT * FROM User WHERE username=student1
+activate DB
+DB-->H: return ResultSet (student1 details)
+deactivate DB
+H-->G: return Student1 (or null if not found)
+
+alt student1 == null or invalid
+    G->G: displayError("Invalid student1")
+else
+    G->H: getStudent(student2)
+    H->DB: SELECT * FROM User WHERE username=student2
+    activate DB
+    DB-->H: return ResultSet (student2 details)
+    deactivate DB
+    H-->G: return Student2 (or null if not found)
+
+    alt student2 == null or invalid
+        G->G: displayError("Invalid student2")
+    else
+        G->H: checkGroupExists(groupName)
+        H->DB: SELECT * FROM groupT WHERE name=groupName
+        activate DB
+        DB-->H: return true/false
+        deactivate DB
+        H-->G: return groupExists
+
+        alt groupExists == true
+            G->G: displayError("Group name already exists")
+        else
+            G->H: createGroup(groupName, currentUser.username)
+            H->DB: INSERT INTO groupT (name, leader) VALUES (groupName, leaderID)
+            activate DB
+            DB-->H: success/failure
+            deactivate DB
+            H-->G: return result
+
+            G->H: sendInvite(groupName, student1)
+            H->DB: INSERT INTO Gr_Inv (GroupID, Stud_ID, Status)
+            activate DB
+            DB-->H: success
+            deactivate DB
+
+            G->H: sendInvite(groupName, student2)
+            H->DB: INSERT INTO Gr_Inv (GroupID, Stud_ID, Status)
+            activate DB
+            DB-->H: success
+            deactivate DB
+        end
+    end
+end
