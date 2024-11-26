@@ -1,5 +1,9 @@
 package application.controller.adminScreens;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import application.datamodel.*;
 import application.persistance.ConcretePersistanceFactory;
 import application.persistance.DBHandler;
@@ -92,21 +96,35 @@ public class AdminDashboardScreenController {
         }
     }
 
+    public static void clearSessionFile() {
+        File file = new File("src/application/session/lastSession.log");
+        try {
+            // Open FileWriter in overwrite mode (default)
+            FileWriter fileWriter = new FileWriter(file, false);
+            fileWriter.write(""); // Writing an empty string clears the file
+            fileWriter.close();
+            System.out.println("Session cleared successfully");
+        } catch (IOException e) {
+            System.out.println("Error clearing session: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
     @FXML
     public void handleLogout(ActionEvent e) {
-        try {
-        	System.out.println("Logout Button Clicked");
-            // Clear the current user session
-            UserSession.getInstance().setCurrentUser(null);
-            
+		try {
+			System.out.println("Logout Button Clicked");
+			// Clear the current user session
+			UserSession.getInstance().setCurrentUser(null);
+			clearSessionFile();
 			Parent root = FXMLLoader.load(getClass().getResource("/resources/views/loginScreen.fxml"));
 			Scene scene = new Scene(root);
 			Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
 			stage.setScene(scene);
 			stage.show();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
     }
     
     @FXML

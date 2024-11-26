@@ -53,7 +53,7 @@ public class Main extends Application {
 				UserSession.getInstance().setCurrentUser(user);
 				
 				if (user instanceof Admin) {
-                    root = FXMLLoader.load(getClass().getResource("/resources/views/adminDashboardScreen.fxml"));
+                    root = FXMLLoader.load(getClass().getResource("/resources/views/adminScreens/AdminDashboardScreen.fxml"));
                 } else if (user instanceof Student) {
 				root = FXMLLoader.load(getClass().getResource("/resources/views/studentDashboardScreen.fxml"));
 			} else if (user instanceof Faculty) {

@@ -95,25 +95,62 @@ public class DBHandler extends PersistanceHandler{
 	    return true;
 	}
 	
-	// Get group members for a specific group
-    public ResultSet getGroupMembers(String groupName) {
-        this.establishConnection();
-        String query = """
-            SELECT u.name
-            FROM GroupT g
-            INNER JOIN User u ON u.ID = g.leader
-            WHERE g.name = ?;
-        """;
-        try {
-            PreparedStatement statement = this.connection.prepareStatement(query);
-            statement.setString(1, groupName);
-            return statement.executeQuery();
-        } catch (SQLException e) {
-            System.out.println("Error fetching group members for group: " + groupName);
-            e.printStackTrace();
-        }
-        return null;
-    }
+//	// Get group members for a specific group
+//    public ResultSet getGroupMembers(String groupName) {
+//        this.establishConnection();
+//        String query = """
+//            SELECT u.name
+//            FROM GroupT g
+//            INNER JOIN User u ON u.ID = g.leader
+//            WHERE g.name = ?;
+//        """;
+//        try {
+//            PreparedStatement statement = this.connection.prepareStatement(query);
+//            statement.setString(1, groupName);
+//            return statement.executeQuery();
+//        } catch (SQLException e) {
+//            System.out.println("Error fetching group members for group: " + groupName);
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+    
+	@Override
+	public String[] getGroupMembers(String groupName) {
+		this.establishConnection();
+		String[] groupMembers = new String[3];
+
+		String sqlQuery1 = """
+				    SELECT leaderUser.name AS leaderName, student1User.name AS student1Name, student2User.name AS student2Name
+				    FROM groupT
+				    JOIN User AS leaderUser ON groupT.leader = leaderUser.ID
+				    JOIN User AS student1User ON groupT.student1 = student1User.ID
+				    JOIN User AS student2User ON groupT.student2 = student2User.ID
+				    WHERE groupT.name = ?;
+				""";
+
+		try {
+			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
+			preparedStatement1.setString(1, groupName);
+			ResultSet result1 = preparedStatement1.executeQuery();
+
+			if (result1.next()) {
+				groupMembers[0] = result1.getString("leaderName");
+				groupMembers[1] = result1.getString("student1Name");
+				groupMembers[2] = result1.getString("student2Name");
+			} else {
+				groupMembers[0] = "No Leader Found";
+				groupMembers[1] = "No Student 1 Found";
+				groupMembers[2] = "No Student 2 Found";
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		this.closeConnection();
+		return groupMembers;
+	}
     
 	public boolean saveResource(String title, String description, String filePath, String uploaderUsername) {
 	    this.establishConnection();
@@ -435,27 +472,7 @@ public class DBHandler extends PersistanceHandler{
 		return numOfGroups;
 	}
 
-	@Override
-	public int getNumOfProjects() {
-		this.establishConnection();
-		int numOfProjects = 0;
 
-		String sqlQuery1 = "SELECT COUNT(*)\r\n" + "FROM project;";
-
-		try {
-			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
-			ResultSet result1 = preparedStatement1.executeQuery();
-			if (result1.next())
-				numOfProjects = result1.getInt(1);
-
-		} catch (SQLException e) {
-			System.out.println("Exception thrown in the getNumOfProjects() method of the DBHandler Class");
-			e.printStackTrace();
-		}
-
-		this.closeConnection();
-		return numOfProjects;
-	}
 
 	@Override
 	public String getGroupName(String Username) {
@@ -567,42 +584,7 @@ public class DBHandler extends PersistanceHandler{
 		return supervisor;
 	}
 
-	@Override
-	public String[] getGroupMembers(String groupName) {
-		this.establishConnection();
-		String[] groupMembers = new String[3];
 
-		String sqlQuery1 = """
-				    SELECT leaderUser.name AS leaderName, student1User.name AS student1Name, student2User.name AS student2Name
-				    FROM groupT
-				    JOIN User AS leaderUser ON groupT.leader = leaderUser.ID
-				    JOIN User AS student1User ON groupT.student1 = student1User.ID
-				    JOIN User AS student2User ON groupT.student2 = student2User.ID
-				    WHERE groupT.name = ?;
-				""";
-
-		try {
-			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
-			preparedStatement1.setString(1, groupName);
-			ResultSet result1 = preparedStatement1.executeQuery();
-
-			if (result1.next()) {
-				groupMembers[0] = result1.getString("leaderName");
-				groupMembers[1] = result1.getString("student1Name");
-				groupMembers[2] = result1.getString("student2Name");
-			} else {
-				groupMembers[0] = "No Leader Found";
-				groupMembers[1] = "No Student 1 Found";
-				groupMembers[2] = "No Student 2 Found";
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		this.closeConnection();
-		return groupMembers;
-	}
 
 	@Override
 	public void createGroup(String groupName, String username) {
@@ -1395,74 +1377,31 @@ public class DBHandler extends PersistanceHandler{
 	}
 	
 	@Override
-	public int getNumOfUsers() {
-		this.establishConnection();
-		int numOfUsers = 0;
-		
-		String sqlQuery1 = "SELECT COUNT(*)\r\n"
-				+ "FROM User;";
-		
-		try {
-			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
-			ResultSet result1 = preparedStatement1.executeQuery();
-			if(result1.next())
-				numOfUsers = result1.getInt(1);
-			
-		} catch (SQLException e) {
-			System.out.println("Exception thrown in the getNumOfUsers() method of the DBHandler Class");
-			e.printStackTrace();
-		}
-		
-		this.closeConnection();
-		return numOfUsers;
-	}
-
-	
-	@Override
-	public int getNumOfGroups() {
-		this.establishConnection();
-		int numOfGroups = 0;
-		
-		String sqlQuery1 = "SELECT COUNT(*)\r\n"
-				+ "FROM groupT;";
-		
-		try {
-			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
-			ResultSet result1 = preparedStatement1.executeQuery();
-			if(result1.next())
-				numOfGroups = result1.getInt(1);
-			
-		} catch (SQLException e) {
-			System.out.println("Exception thrown in the getNumOfGroups() method of the DBHandler Class");
-			e.printStackTrace();
-		}
-		
-		this.closeConnection();
-		return numOfGroups;
-	}
-
-	@Override
 	public int getNumOfProjects() {
 		this.establishConnection();
 		int numOfProjects = 0;
-		
-		String sqlQuery1 = "SELECT COUNT(*)\r\n"
-				+ "FROM project;";
-		
+
+		String sqlQuery1 = "SELECT COUNT(*)\r\n" + "FROM project;";
+
 		try {
 			PreparedStatement preparedStatement1 = this.connection.prepareStatement(sqlQuery1);
 			ResultSet result1 = preparedStatement1.executeQuery();
-			if(result1.next())
+			if (result1.next())
 				numOfProjects = result1.getInt(1);
-			
+
 		} catch (SQLException e) {
 			System.out.println("Exception thrown in the getNumOfProjects() method of the DBHandler Class");
 			e.printStackTrace();
 		}
-		
+
 		this.closeConnection();
 		return numOfProjects;
 	}
+
+	
+
+
+
 	
 	
 	//grade students ftnality

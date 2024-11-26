@@ -26,7 +26,7 @@ public class SetTimelineController {
     private Button cancelButton;
 
     // File path where the details will be saved
-    private static final String FILE_PATH = "timeline_details.txt";
+    private static final String FILE_PATH = "src/timeline_details.txt";
 
     @FXML
     private void initialize() {

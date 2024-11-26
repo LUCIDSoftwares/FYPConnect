@@ -1,5 +1,7 @@
 package application.controller;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import application.datamodel.User;
@@ -11,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -52,6 +55,10 @@ public class FacultyScreenController {
 
 	@FXML
 	public Button MentorshipreqButton;
+	
+	@FXML
+	public TextField faculty_username;
+	
 
 	// The initialize method is automatically called after the FXML file is loaded
 	@FXML
@@ -66,15 +73,18 @@ public class FacultyScreenController {
 			 */ } else {
 			System.out.println("No user found in session");
 		}
+		faculty_username.setText(user.getName());
+		
+		
 	}
 
 	@FXML
 	public void handleLogout(ActionEvent e) {
 		try {
-			System.out.println("close Button Clicked");
+			System.out.println("Logout Button Clicked");
 			// Clear the current user session
 			UserSession.getInstance().setCurrentUser(null);
-
+			clearSessionFile();
 			Parent root = FXMLLoader.load(getClass().getResource("/resources/views/loginScreen.fxml"));
 			Scene scene = new Scene(root);
 			Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
@@ -85,6 +95,20 @@ public class FacultyScreenController {
 		}
 	}
 
+    public static void clearSessionFile() {
+        File file = new File("src/application/session/lastSession.log");
+        try {
+            // Open FileWriter in overwrite mode (default)
+            FileWriter fileWriter = new FileWriter(file, false);
+            fileWriter.write(""); // Writing an empty string clears the file
+            fileWriter.close();
+            System.out.println("Session cleared successfully");
+        } catch (IOException e) {
+            System.out.println("Error clearing session: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+	
 	@FXML
 	public void Dashboard1(ActionEvent me) {
 		bp.setCenter(contentplane);
