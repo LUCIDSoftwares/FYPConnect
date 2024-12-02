@@ -118,7 +118,7 @@ public class GradeStudentsController {
 
         if (selectedDeliverableId != -1 && selectedGroupId != -1 && !grade.isEmpty()) {
             try {
-                boolean success = dbHandler.saveFeedback(selectedGroupId, 6, selectedDeliverableId, grade, remarks);
+                boolean success = dbHandler.saveFeedback(selectedGroupId, facultyID, selectedDeliverableId, grade, remarks);
                 if (success) {
                     showAlert("Success", "Feedback saved successfully.");
                 } else {
